@@ -5,10 +5,30 @@
 //   CONTACT_TO          where inquiries are delivered
 import nodemailer from 'nodemailer';
 
+const MAX = { name: 120, email: 160, phone: 40, message: 5000 };
+
 const escapeHtml = (s = '') =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+// Strip CR/LF so values used in subject/headers can't inject extra headers.
+const oneLine = (s = '') => String(s).replace(/[\r\n]+/g, ' ').trim();
 const isEmail = (s = '') => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s);
+
+// Best-effort in-memory rate limit (per warm instance). Not bulletproof across
+// instances, but throttles bursts cheaply with no extra infrastructure.
+const HITS = (globalThis.__contactHits ??= new Map());
+const WINDOW_MS = 60_000;
+const MAX_PER_WINDOW = 5;
+
+function rateLimited(ip) {
+  const now = Date.now();
+  const recent = (HITS.get(ip) || []).filter((t) => now - t < WINDOW_MS);
+  if (recent.length >= MAX_PER_WINDOW) return true;
+  recent.push(now);
+  HITS.set(ip, recent);
+  if (HITS.size > 5000) HITS.clear(); // crude memory cap
+  return false;
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -16,19 +36,43 @@ export default async function handler(req, res) {
     return res.status(405).json({ ok: false, error: 'method_not_allowed' });
   }
 
-  // Vercel auto-parses JSON / urlencoded bodies.
+  // Same-origin guard: block cross-site browser POSTs (drive-by abuse).
+  const origin = req.headers.origin;
+  if (origin) {
+    try {
+      if (new URL(origin).host !== req.headers.host) {
+        return res.status(403).json({ ok: false, error: 'forbidden' });
+      }
+    } catch {
+      return res.status(403).json({ ok: false, error: 'forbidden' });
+    }
+  }
+
+  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
+  if (rateLimited(ip)) {
+    return res.status(429).json({ ok: false, error: 'rate_limited' });
+  }
+
   const body = typeof req.body === 'string' ? safeJson(req.body) : req.body || {};
-  const name = (body.name || '').trim();
-  const email = (body.email || '').trim();
-  const phone = (body.phone || '').trim();
-  const message = (body.message || '').trim();
-  const honeypot = (body.company || '').trim(); // hidden field; humans leave it empty
+  const name = (body.name || '').toString().trim();
+  const email = (body.email || '').toString().trim();
+  const phone = (body.phone || '').toString().trim();
+  const message = (body.message || '').toString().trim();
+  const honeypot = (body.company || '').toString().trim(); // hidden field; humans leave it empty
 
   // Silently accept bot submissions (don't tip them off), but send nothing.
   if (honeypot) return res.status(200).json({ ok: true });
 
   if (!name || !email || !message || !isEmail(email)) {
     return res.status(400).json({ ok: false, error: 'invalid_input' });
+  }
+  if (
+    name.length > MAX.name ||
+    email.length > MAX.email ||
+    phone.length > MAX.phone ||
+    message.length > MAX.message
+  ) {
+    return res.status(413).json({ ok: false, error: 'too_long' });
   }
 
   const { GMAIL_USER, GMAIL_APP_PASSWORD, CONTACT_TO } = process.env;
@@ -45,8 +89,8 @@ export default async function handler(req, res) {
     await transporter.sendMail({
       from: `"Algreen — sajt" <${GMAIL_USER}>`,
       to: CONTACT_TO || GMAIL_USER,
-      replyTo: email,
-      subject: `Novi upit sa sajta — ${name}`,
+      replyTo: email, // already validated to have no newlines
+      subject: `Novi upit sa sajta — ${oneLine(name)}`,
       text: `Ime: ${name}\nEmail: ${email}\nTelefon: ${phone || '—'}\n\nPoruka:\n${message}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:560px">

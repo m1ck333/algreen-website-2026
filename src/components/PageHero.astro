@@ -4,8 +4,10 @@ interface Props {
   subtitle?: string;
   image?: string;
   eyebrow?: string;
+  /** Optional uppercase, letter-spaced "kicker" line (e.g. a list of process steps). */
+  kicker?: string;
 }
-const { title, subtitle, image = '/img/header.jpg', eyebrow } = Astro.props;
+const { title, subtitle, image = '/img/header.jpg', eyebrow, kicker } = Astro.props;
 ---
 
 <section class="relative flex min-h-[52vh] items-end overflow-hidden bg-ink-900 sm:min-h-[60vh]">
@@ -18,5 +20,6 @@ const { title, subtitle, image = '/img/header.jpg', eyebrow } = Astro.props;
     {eyebrow && <p class="eyebrow animate-fade-up text-gold-light">{eyebrow}</p>}
     <h1 class="max-w-3xl animate-fade-up font-display text-5xl font-semibold text-white sm:text-6xl lg:text-7xl" style="animation-delay:.1s">{title}</h1>
     {subtitle && <p class="mt-5 max-w-2xl animate-fade-up text-lg text-white/75" style="animation-delay:.2s">{subtitle}</p>}
+    {kicker && <p class="mt-5 animate-fade-up text-sm font-semibold uppercase tracking-[0.28em] text-gold-light" style="animation-delay:.2s">{kicker}</p>}
   </div>
 </section>
