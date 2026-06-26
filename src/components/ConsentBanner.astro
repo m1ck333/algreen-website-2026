@@ -1,0 +1,72 @@
+---
+import { useTranslations } from '../i18n/ui';
+import type { Lang } from '../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<div
+  class="fixed inset-x-3 bottom-3 z-[70] hidden rounded-2xl border border-white/10 bg-ink-900/95 p-5 text-white shadow-luxe backdrop-blur-md sm:inset-x-auto sm:right-5 sm:max-w-sm lg:bottom-5"
+  data-consent
+  role="dialog"
+  aria-live="polite"
+  aria-label="Cookies"
+>
+  <p class="text-sm leading-relaxed text-white/80">{t.consent.text}</p>
+  <div class="mt-4 flex gap-3">
+    <button type="button" class="btn-primary flex-1 !py-2.5 !text-xs" data-consent-accept>{t.consent.accept}</button>
+    <button
+      type="button"
+      class="flex-1 rounded-full border border-white/30 px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-white transition-colors hover:bg-white/10"
+      data-consent-decline
+    >
+      {t.consent.decline}
+    </button>
+  </div>
+</div>
+
+<script>
+  const KEY = 'algreen-consent';
+  const banner = document.querySelector('[data-consent]') as HTMLElement | null;
+
+  function gtagUpdate(granted: boolean) {
+    const w = window as any;
+    w.dataLayer = w.dataLayer || [];
+    function gtag(...args: any[]) {
+      w.dataLayer.push(args);
+    }
+    const v = granted ? 'granted' : 'denied';
+    gtag('consent', 'update', {
+      ad_storage: v,
+      analytics_storage: v,
+      ad_user_data: v,
+      ad_personalization: v,
+    });
+  }
+
+  function decide(granted: boolean) {
+    try {
+      localStorage.setItem(KEY, granted ? 'granted' : 'denied');
+    } catch {}
+    gtagUpdate(granted);
+    banner?.remove();
+  }
+
+  let stored: string | null = null;
+  try {
+    stored = localStorage.getItem(KEY);
+  } catch {}
+
+  if (!stored) {
+    banner?.classList.remove('hidden');
+  } else {
+    banner?.remove();
+  }
+
+  document.querySelector('[data-consent-accept]')?.addEventListener('click', () => decide(true));
+  document.querySelector('[data-consent-decline]')?.addEventListener('click', () => decide(false));
+</script>

@@ -9,6 +9,9 @@ export const defaultLang: Lang = 'sr';
 /** External configurator app (kept from the existing infrastructure). */
 export const CONFIGURATOR_URL = 'https://konfigurator.algreen.rs';
 
+/** Google Tag Manager container (carried over from the old site). Set '' to disable. */
+export const GTM_ID = 'GTM-N9D9PRC';
+
 /** Shared company / contact data — single source of truth. */
 export const company = {
   name: 'Algreen',

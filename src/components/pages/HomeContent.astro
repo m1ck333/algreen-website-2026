@@ -3,6 +3,8 @@ import { useTranslations } from '../../i18n/ui';
 import { path } from '../../i18n/routes';
 import { company, stats, type Lang } from '../../i18n/config';
 import CtaBand from '../CtaBand.astro';
+import ProcessSection from '../ProcessSection.astro';
+import FaqSection from '../FaqSection.astro';
 
 interface Props {
   lang: Lang;
@@ -18,14 +20,23 @@ const reviews = ['/img/Recenzija1.png', '/img/Recenzija2.png', '/img/Recenzija3.
 <!-- HERO -->
 <section class="relative flex min-h-[92vh] items-center overflow-hidden bg-ink-900">
   <div class="absolute inset-0 overflow-hidden">
-    <img
-      src="/img/hero-door-new.jpg"
-      alt="Algreen aluminijumska ulazna vrata"
-      fetchpriority="high"
-      width="1920"
-      height="1280"
-      class="h-full w-full animate-kenburns object-cover object-center"
-    />
+    <picture>
+      <source
+        type="image/avif"
+        srcset="/img/hero-door-new-1280.avif 1280w, /img/hero-door-new.avif 1380w"
+        sizes="100vw"
+      />
+      <img
+        src="/img/hero-door-new.jpg"
+        srcset="/img/hero-door-new-1280.jpg 1280w, /img/hero-door-new.jpg 1380w"
+        sizes="100vw"
+        alt="Algreen aluminijumska ulazna vrata"
+        fetchpriority="high"
+        width="1380"
+        height="591"
+        class="h-full w-full animate-kenburns object-cover object-center"
+      />
+    </picture>
   </div>
   <div class="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/75 to-ink-900/35"></div>
   <div class="absolute inset-0 bg-gradient-to-r from-ink-900/80 to-transparent"></div>
@@ -106,6 +117,8 @@ const reviews = ['/img/Recenzija1.png', '/img/Recenzija2.png', '/img/Recenzija3.
     </div>
   </div>
 </section>
+
+<ProcessSection lang={lang} />
 
 <!-- CONFIGURATOR -->
 <section class="section relative overflow-hidden bg-cream-50">
@@ -265,6 +278,8 @@ const reviews = ['/img/Recenzija1.png', '/img/Recenzija2.png', '/img/Recenzija3.
     </div>
   </div>
 </section>
+
+<FaqSection lang={lang} />
 
 <CtaBand lang={lang} variant="configurator" />
 

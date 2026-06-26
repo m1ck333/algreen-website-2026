@@ -2,7 +2,10 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { company } from '../i18n/config';
+import FloatingCta from '../components/FloatingCta.astro';
+import ConsentBanner from '../components/ConsentBanner.astro';
+import { useTranslations } from '../i18n/ui';
+import { company, GTM_ID } from '../i18n/config';
 import { routes, type RouteKey } from '../i18n/routes';
 import type { Lang } from '../i18n/config';
 
@@ -12,9 +15,12 @@ interface Props {
   title: string;
   description: string;
   ogImage?: string;
+  /** Extra JSON-LD object(s) to embed (e.g. ItemList of products). */
+  extraSchema?: object | object[];
 }
 
-const { lang, routeKey, title, description, ogImage = '/img/hero-door-new.jpg' } = Astro.props;
+const { lang, routeKey, title, description, ogImage = '/img/og-default.jpg', extraSchema } = Astro.props;
+const tt = useTranslations(lang);
 
 const site = Astro.site?.href.replace(/\/$/, '') ?? 'https://algreen.rs';
 const srPath = routes[routeKey].sr;
@@ -44,9 +50,25 @@ const jsonLd = {
       addressCountry: 'RS',
     },
     telephone: b.phones[0],
-    email: b.email,
+    email: company.email,
   })),
 };
+
+// BreadcrumbList for inner pages (Home › Current).
+const breadcrumb =
+  routeKey === 'home'
+    ? null
+    : {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: tt.nav.home, item: site + routes.home[lang] },
+          { '@type': 'ListItem', position: 2, name: tt.nav[routeKey], item: canonical },
+        ],
+      };
+
+const extraSchemas = extraSchema ? (Array.isArray(extraSchema) ? extraSchema : [extraSchema]) : [];
+const allSchemas = [jsonLd, ...(breadcrumb ? [breadcrumb] : []), ...extraSchemas];
 ---
 
 <!doctype html>
@@ -54,6 +76,42 @@ const jsonLd = {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {/* Google Consent Mode (default denied) + GTM — analytics only fire after opt-in */}
+    {GTM_ID && (
+      <script is:inline define:vars={{ GTM_ID }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('consent', 'default', {
+          ad_storage: 'denied',
+          analytics_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+          wait_for_update: 500,
+        });
+        try {
+          if (localStorage.getItem('algreen-consent') === 'granted') {
+            gtag('consent', 'update', {
+              ad_storage: 'granted',
+              analytics_storage: 'granted',
+              ad_user_data: 'granted',
+              ad_personalization: 'granted',
+            });
+          }
+        } catch (e) {}
+        (function (w, d, s, l, i) {
+          w[l] = w[l] || [];
+          w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+          var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s),
+            dl = l != 'dataLayer' ? '&l=' + l : '';
+          j.async = true;
+          j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+          f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', GTM_ID);
+      </script>
+    )}
+
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -63,10 +121,11 @@ const jsonLd = {
     <link rel="alternate" hreflang="en" href={site + enPath} />
     <link rel="alternate" hreflang="x-default" href={site + srPath} />
 
-    <!-- Favicons -->
+    <!-- Favicons & PWA -->
     <link rel="icon" type="image/png" href="/img/favicon.png" />
     <link rel="icon" type="image/x-icon" href="/img/favicon.ico" />
     <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#1f1c1c" />
 
     <!-- Open Graph -->
@@ -77,6 +136,8 @@ const jsonLd = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -92,9 +153,14 @@ const jsonLd = {
       rel="stylesheet"
     />
 
-    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    {allSchemas.map((schema) => <script type="application/ld+json" set:html={JSON.stringify(schema)} />)}
   </head>
   <body>
+    {GTM_ID && (
+      <noscript
+        set:html={`<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`}
+      />
+    )}
     <a
       href="#main"
       class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:bg-ink-900 focus:px-4 focus:py-2 focus:text-white"
@@ -105,6 +171,8 @@ const jsonLd = {
       <slot />
     </main>
     <Footer lang={lang} />
+    <FloatingCta lang={lang} />
+    <ConsentBanner lang={lang} />
 
     <script>
       // Lightweight scroll-reveal — no library needed.

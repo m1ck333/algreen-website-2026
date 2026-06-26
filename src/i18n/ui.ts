@@ -28,6 +28,11 @@ export const ui = {
       backToHome: 'Nazad na početnu',
       menu: 'Meni',
     },
+    consent: {
+      text: 'Koristimo kolačiće za analitiku kako bismo poboljšali sajt. Možete prihvatiti ili odbiti.',
+      accept: 'Prihvatam',
+      decline: 'Odbijam',
+    },
     home: {
       metaTitle: 'Ekskluzivna aluminijumska ulazna vrata | Algreen Niš & Beograd',
       metaDescription:
@@ -86,6 +91,28 @@ export const ui = {
       employees: 'zaposlenih',
       products: 'proizvoda',
       customers: 'zadovoljnih kupaca',
+    },
+    process: {
+      heading: 'Kako dolazimo do Vaših vrata',
+      subheading: 'Od prvog razgovora do montaže — vodimo Vas kroz svaki korak.',
+      steps: [
+        { title: 'Konsultacije i mere', text: 'Razgovaramo o Vašim željama i potrebama, savetujemo oko sistema i preuzimamo precizne mere.' },
+        { title: 'Dizajn u konfiguratoru', text: 'Birate model, boje i opremu — sami sastavljate izgled vrata ili to prepuštate našem timu.' },
+        { title: 'Proizvodnja', text: 'Vaša vrata izrađujemo pažljivim izborom i kombinacijom materijala vrhunskog kvaliteta.' },
+        { title: 'Isporuka i montaža', text: 'Dostavljamo i stručno montiramo vrata, uz punu podršku i nakon ugradnje.' },
+      ],
+    },
+    faq: {
+      heading: 'Često postavljana pitanja',
+      subheading: 'Niste pronašli odgovor? Rado ćemo Vam pomoći.',
+      items: [
+        { q: 'Od kog materijala su vaša ulazna vrata?', a: 'Izrađujemo aluminijumska ulazna vrata sa termoprekidom i panelima debljine od 38 do 85 mm, u zavisnosti od sistema (AG 70, AG 77, AG 85).' },
+        { q: 'Da li vršite montažu?', a: 'Da. Pažljivo pristupamo dizajnu, izradi, isporuci i montaži naših proizvoda — zadovoljstvo klijenta nam je na prvom mestu.' },
+        { q: 'Mogu li sam da dizajniram svoja vrata?', a: 'Naravno. Putem našeg online konfiguratora birate model, boje i opremu i sastavljate vrata po svojoj meri.' },
+        { q: 'Koliko modela imate u ponudi?', a: 'U ponudi imamo više od 400 modela koje možete prilagoditi svojim željama i potrebama.' },
+        { q: 'Kakvu bezbednost nude vaša vrata?', a: 'Nudimo brave sa 3 i 5 tačaka zaključavanja, cilindre i 3D šarke, a opciono i čitač otiska prsta, šifrator i špijunku sa ekranom.' },
+        { q: 'Koliko traje izrada i isporuka?', a: 'Rok zavisi od izabranog modela i konfiguracije. Za precizan rok i ponudu, kontaktirajte nas ili posetite jednu od poslovnica u Nišu i Beogradu.' },
+      ],
     },
     about: {
       metaTitle: 'O nama — Umetnost izrade ulaznih vrata | Algreen',
@@ -253,6 +280,11 @@ export const ui = {
       backToHome: 'Back to home',
       menu: 'Menu',
     },
+    consent: {
+      text: 'We use cookies for analytics to improve the site. You can accept or decline.',
+      accept: 'Accept',
+      decline: 'Decline',
+    },
     home: {
       metaTitle: 'Exclusive aluminium entrance doors | Algreen Niš & Belgrade',
       metaDescription:
@@ -311,6 +343,28 @@ export const ui = {
       employees: 'employees',
       products: 'products',
       customers: 'happy customers',
+    },
+    process: {
+      heading: 'How we get to your door',
+      subheading: 'From the first conversation to installation — we guide you through every step.',
+      steps: [
+        { title: 'Consultation & measuring', text: 'We discuss your wishes and needs, advise on the right system and take precise measurements.' },
+        { title: 'Design in the configurator', text: 'You choose the model, colours and equipment — design the look yourself or leave it to our team.' },
+        { title: 'Production', text: 'We make your door with a careful selection and combination of top-quality materials.' },
+        { title: 'Delivery & installation', text: 'We deliver and professionally install your door, with full support after installation too.' },
+      ],
+    },
+    faq: {
+      heading: 'Frequently asked questions',
+      subheading: 'Didn’t find your answer? We’ll be glad to help.',
+      items: [
+        { q: 'What material are your entrance doors made of?', a: 'We make aluminium entrance doors with a thermal break and panels from 38 to 85 mm thick, depending on the system (AG 70, AG 77, AG 85).' },
+        { q: 'Do you handle installation?', a: 'Yes. We carefully approach the design, manufacture, delivery and installation of our products — customer satisfaction comes first.' },
+        { q: 'Can I design my own door?', a: 'Absolutely. Using our online configurator you choose the model, colours and equipment and build a door made to measure.' },
+        { q: 'How many models do you offer?', a: 'We offer more than 400 models that you can adapt to your wishes and needs.' },
+        { q: 'What security do your doors provide?', a: 'We offer 3- and 5-point locks, cylinders and 3D hinges, and optionally a fingerprint reader, coder and a spyhole with screen.' },
+        { q: 'How long does production and delivery take?', a: 'It depends on the chosen model and configuration. For a precise timeline and quote, contact us or visit one of our branches in Niš and Belgrade.' },
+      ],
     },
     about: {
       metaTitle: 'About us — The art of making entrance doors | Algreen',

@@ -1,9 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { useTranslations } from '../i18n/ui';
-import { path } from '../i18n/routes';
 const lang = 'sr' as const;
-const t = useTranslations(lang);
 ---
 
 <BaseLayout
@@ -12,12 +9,20 @@ const t = useTranslations(lang);
   title="404 — Stranica nije pronađena | Algreen"
   description="Tražena stranica ne postoji."
 >
-  <section class="flex min-h-[70vh] items-center bg-ink-900">
+  <section class="flex min-h-[80vh] items-center bg-ink-900">
     <div class="container-px text-center">
-      <p class="text-7xl font-bold text-gold sm:text-9xl">404</p>
-      <h1 class="mt-4 text-2xl font-semibold text-white sm:text-3xl">Stranica nije pronađena</h1>
-      <p class="mt-3 text-white/60">Žao nam je, tražena stranica ne postoji.</p>
-      <a href={path('home', lang)} class="btn-primary mt-8">{t.common.backToHome}</a>
+      <p class="font-display text-7xl font-bold text-gradient-gold sm:text-9xl">404</p>
+      <h1 class="mt-4 font-display text-2xl font-semibold text-white sm:text-3xl">
+        Stranica nije pronađena <span class="text-white/40">/ Page not found</span>
+      </h1>
+      <p class="mt-3 text-white/60">
+        Žao nam je, tražena stranica ne postoji.<br />
+        <span class="text-white/40">Sorry, the page you’re looking for doesn’t exist.</span>
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href="/" class="btn-primary">Početna</a>
+        <a href="/en/" class="btn-ghost">Home (EN)</a>
+      </div>
     </div>
   </section>
 </BaseLayout>

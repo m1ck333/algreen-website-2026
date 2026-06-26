@@ -2,10 +2,11 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TechnicalContent from '../../components/pages/TechnicalContent.astro';
 import { useTranslations } from '../../i18n/ui';
+import { doorSystemsSchema } from '../../i18n/schema';
 const lang = 'en' as const;
 const t = useTranslations(lang);
 ---
 
-<BaseLayout lang={lang} routeKey="technical" title={t.technical.metaTitle} description={t.technical.metaDescription}>
+<BaseLayout lang={lang} routeKey="technical" title={t.technical.metaTitle} description={t.technical.metaDescription} extraSchema={doorSystemsSchema(lang)}>
   <TechnicalContent lang={lang} />
 </BaseLayout>

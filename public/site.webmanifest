@@ -1,0 +1,15 @@
+{
+  "name": "Algreen — Ekskluzivna aluminijumska ulazna vrata",
+  "short_name": "Algreen",
+  "description": "Aluminijumska ulazna vrata po meri — vrhunski kvalitet, sigurnost i dizajn.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f1c1c",
+  "lang": "sr-RS",
+  "icons": [
+    { "src": "/img/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/img/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/img/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
