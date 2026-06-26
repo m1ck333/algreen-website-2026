@@ -26,11 +26,11 @@ const logoHref = routes.home[lang];
 
 <header
   id="site-header"
-  class="fixed inset-x-0 top-0 z-50 transition-colors duration-300"
+  class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-ink-900/30 backdrop-blur-md transition-all duration-300"
   data-header
 >
   <div class="container-px flex items-center justify-between py-4">
-    <!-- Logo -->
+    <!-- Logo (always the white wordmark — bar is always dark glass) -->
     <a href={logoHref} class="relative z-10 flex items-center" aria-label="Algreen">
       <img
         src="/img/newlogobeli.png"
@@ -38,15 +38,6 @@ const logoHref = routes.home[lang];
         width="140"
         height="40"
         class="h-9 w-auto"
-        data-logo-light
-      />
-      <img
-        src="/img/newlogo.png"
-        alt="Algreen"
-        width="140"
-        height="40"
-        class="hidden h-9 w-auto"
-        data-logo-dark
       />
     </a>
 
@@ -57,8 +48,8 @@ const logoHref = routes.home[lang];
           <a
             href={routes[item.key][lang]}
             class:list={[
-              'text-sm font-medium uppercase tracking-wide transition-colors hover:text-gold',
-              routeKey === item.key ? 'text-gold' : 'text-white/90',
+              'relative text-xs font-medium uppercase tracking-wider transition-colors hover:text-gold after:absolute after:-bottom-1.5 after:left-0 after:h-px after:bg-gold after:transition-all after:duration-300',
+              routeKey === item.key ? 'text-gold after:w-full' : 'text-white/90 after:w-0 hover:after:w-full',
             ]}
             data-nav-link
             aria-current={routeKey === item.key ? 'page' : undefined}
@@ -79,7 +70,7 @@ const logoHref = routes.home[lang];
       <!-- Language switcher -->
       <a
         href={otherLangHref}
-        class="hidden rounded-full border border-white/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-white transition-colors hover:bg-white hover:text-ink-900 lg:inline-block"
+        class="hidden rounded-full border border-white/40 bg-white/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-ink-900 lg:inline-block"
         data-lang-switch
         hreflang={otherLang}
       >
@@ -109,7 +100,7 @@ const logoHref = routes.home[lang];
   <!-- Mobile menu panel -->
   <div
     id="mobile-menu"
-    class="invisible fixed inset-0 z-50 flex translate-x-full flex-col bg-ink-900 px-6 pb-10 pt-24 text-white transition-transform duration-300 ease-in-out lg:hidden"
+    class="invisible fixed inset-0 z-50 flex translate-x-full flex-col bg-ink-900/90 px-6 pb-10 pt-24 text-white backdrop-blur-2xl transition-transform duration-300 ease-in-out lg:hidden"
     data-mobile-menu
   >
     <nav class="flex flex-col gap-1" aria-label="Mobilni meni">
@@ -149,10 +140,6 @@ const logoHref = routes.home[lang];
   const menu = document.querySelector('[data-mobile-menu]') as HTMLElement | null;
   const iconOpen = document.querySelector('[data-icon-open]') as SVGElement | null;
   const iconClose = document.querySelector('[data-icon-close]') as SVGElement | null;
-  const logoLight = document.querySelector('[data-logo-light]') as HTMLImageElement | null;
-  const logoDark = document.querySelector('[data-logo-dark]') as HTMLImageElement | null;
-  const navLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
-  const langSwitch = document.querySelector('[data-lang-switch]') as HTMLElement | null;
 
   let menuOpen = false;
 
@@ -169,28 +156,15 @@ const logoHref = routes.home[lang];
 
   toggle?.addEventListener('click', () => setMenu(!menuOpen));
 
-  // Solid header on scroll (and over the menu) — swaps logo + link colors.
+  // Persistent dark frosted-glass bar (white text always). Just deepens the
+  // tint + adds a shadow once you scroll past the top — no color/logo flip.
   function onScroll() {
-    const scrolled = window.scrollY > 30;
     if (!header) return;
-    header.classList.toggle('bg-white', scrolled);
-    header.classList.toggle('shadow-md', scrolled);
-    logoLight?.classList.toggle('hidden', scrolled);
-    logoDark?.classList.toggle('hidden', !scrolled);
-    navLinks.forEach((l) => {
-      if (l.getAttribute('aria-current') === 'page') return;
-      l.classList.toggle('text-white/90', !scrolled);
-      l.classList.toggle('text-ink-800', scrolled);
-    });
-    if (langSwitch) {
-      langSwitch.classList.toggle('border-white/40', !scrolled);
-      langSwitch.classList.toggle('text-white', !scrolled);
-      langSwitch.classList.toggle('border-ink-900/30', scrolled);
-      langSwitch.classList.toggle('text-ink-900', scrolled);
-    }
-    // keep mobile toggle visible on white header
-    toggle?.classList.toggle('text-white', !scrolled);
-    toggle?.classList.toggle('text-ink-900', scrolled);
+    const scrolled = window.scrollY > 30;
+    header.classList.toggle('bg-ink-900/30', !scrolled);
+    header.classList.toggle('bg-ink-900/80', scrolled);
+    header.classList.toggle('shadow-lg', scrolled);
+    header.classList.toggle('shadow-ink-900/20', scrolled);
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });

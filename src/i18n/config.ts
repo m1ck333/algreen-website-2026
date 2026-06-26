@@ -14,6 +14,8 @@ export const company = {
   name: 'Algreen',
   legalName: 'Algreen d.o.o.',
   configurator: CONFIGURATOR_URL,
+  // Primary public contact address — where the website form delivers and what we display.
+  email: 'info@algreen.rs',
   socials: {
     facebook:
       'https://www.facebook.com/profile.php?id=100083236694516&mibextid=LQQJ4d',
@@ -41,10 +43,10 @@ export const company = {
   ],
 } as const;
 
-/** Stats shown on the home page. */
+/** Stats shown on the home page (count-up animated). */
 export const stats = [
-  { value: '2', key: 'branches' },
-  { value: '16', key: 'employees' },
-  { value: '3000+', key: 'products' },
-  { value: '1400+', key: 'customers' },
+  { num: 2, suffix: '', key: 'branches' },
+  { num: 16, suffix: '', key: 'employees' },
+  { num: 3000, suffix: '+', key: 'products' },
+  { num: 1400, suffix: '+', key: 'customers' },
 ] as const;

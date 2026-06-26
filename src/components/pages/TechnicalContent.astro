@@ -23,14 +23,14 @@ const systems = t.technical.systems;
 </section>
 
 <!-- System cards -->
-<section class="bg-brand-50 section">
+<section class="bg-cream-50 section">
   <div class="container-px">
     <h2 class="mb-12 text-center text-3xl font-semibold text-ink-900 sm:text-4xl reveal">{t.technical.systemsHeading}</h2>
     <div class="grid gap-8 lg:grid-cols-2">
       {
         systems.map((s) => (
           <article class="grid gap-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink-900/5 sm:grid-cols-[160px_1fr] reveal">
-            <div class="flex items-center justify-center rounded-xl bg-brand-50 p-4">
+            <div class="flex items-center justify-center rounded-xl bg-cream-50 p-4">
               <img src={s.img} alt={`${s.name} ${t.technical.sectionLabel}`} loading="lazy" class="max-h-44 w-auto object-contain" />
             </div>
             <div>
@@ -81,7 +81,7 @@ const systems = t.technical.systems;
           <td class="py-4 pr-4 font-medium text-ink-700">{t.technical.panelLabel}</td>
           {systems.map((s) => <td class="px-4 py-4 text-ink-700">{s.panel}</td>)}
         </tr>
-        <tr class="border-b border-ink-900/10 bg-brand-50/50">
+        <tr class="border-b border-ink-900/10 bg-cream-50/50">
           <td class="py-4 pr-4 font-medium text-ink-700">{t.technical.glassLabel}</td>
           {systems.map((s) => <td class="px-4 py-4 text-ink-700">{s.glass}</td>)}
         </tr>

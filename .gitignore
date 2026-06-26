@@ -20,3 +20,4 @@ node_modules/
 
 # logs
 npm-debug.log*
+.vercel

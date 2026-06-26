@@ -77,6 +77,9 @@ export const ui = {
       ],
       ctaHeading: 'Spremni za vrata po Vašoj meri?',
       ctaText: 'Posetite jednu od naših poslovnica ili nas kontaktirajte — pomoći ćemo Vam da odaberete idealno rešenje.',
+      testimonialsHeading: 'Šta kažu naši kupci',
+      testimonialsSubheading: 'Poverenje koje gradimo sa svakim ugrađenim vratima.',
+      systemsTab: 'Izaberite sistem',
     },
     statsLabels: {
       branches: 'poslovnice',
@@ -221,6 +224,9 @@ export const ui = {
       formMessage: 'Poruka',
       formSubmit: 'Pošalji',
       formNote: 'Odgovaramo u najkraćem mogućem roku.',
+      formSending: 'Slanje…',
+      formSuccess: 'Hvala! Vaš upit je uspešno poslat. Javićemo Vam se uskoro.',
+      formError: 'Došlo je do greške pri slanju. Pokušajte ponovo ili nas kontaktirajte telefonom.',
     },
   },
 
@@ -296,6 +302,9 @@ export const ui = {
       ],
       ctaHeading: 'Ready for a door made to measure?',
       ctaText: 'Visit one of our branches or get in touch — we will help you choose the ideal solution.',
+      testimonialsHeading: 'What our customers say',
+      testimonialsSubheading: 'The trust we build with every installed door.',
+      systemsTab: 'Choose a system',
     },
     statsLabels: {
       branches: 'branches',
@@ -440,6 +449,9 @@ export const ui = {
       formMessage: 'Message',
       formSubmit: 'Send',
       formNote: 'We reply as soon as possible.',
+      formSending: 'Sending…',
+      formSuccess: 'Thank you! Your inquiry was sent successfully. We will get back to you soon.',
+      formError: 'Something went wrong while sending. Please try again or contact us by phone.',
     },
   },
 } as const;

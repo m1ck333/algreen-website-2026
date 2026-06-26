@@ -38,7 +38,7 @@ const teamEyebrow = lang === 'sr' ? 'Tim' : 'Team';
 </section>
 
 <!-- Main statement -->
-<section class="bg-brand-50 section">
+<section class="bg-cream-50 section">
   <div class="container-px max-w-4xl text-center reveal">
     <h2 class="text-3xl font-semibold text-ink-900 sm:text-4xl">{t.about.mainHeading}</h2>
     <p class="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-ink-700">{t.about.mainText}</p>
@@ -56,7 +56,7 @@ const teamEyebrow = lang === 'sr' ? 'Tim' : 'Team';
       {
         t.about.team.map((member, i) => (
           <article class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-ink-900/5 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl reveal">
-            <div class="aspect-[16/10] overflow-hidden bg-brand-100">
+            <div class="aspect-[16/10] overflow-hidden bg-cream-100">
               <img src={teamImages[i]} alt={member.title} loading="lazy" class="h-full w-full object-cover" />
             </div>
             <div class="p-6">
