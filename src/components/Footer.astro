@@ -1,0 +1,117 @@
+---
+import { useTranslations } from '../i18n/ui';
+import { routes, type RouteKey } from '../i18n/routes';
+import { company, type Lang } from '../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const year = new Date().getFullYear();
+
+const navItems: { key: RouteKey; label: string }[] = [
+  { key: 'about', label: t.nav.about },
+  { key: 'works', label: t.nav.works },
+  { key: 'equipment', label: t.nav.equipment },
+  { key: 'technical', label: t.nav.technical },
+  { key: 'contact', label: t.nav.contact },
+];
+
+const txt = (v: string | Record<Lang, string>) => (typeof v === 'string' ? v : v[lang]);
+---
+
+<footer class="bg-ink-900 text-white/80">
+  <div class="container-px grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-4">
+    <!-- Brand -->
+    <div class="lg:col-span-1">
+      <img src="/img/newlogobeli.png" alt="Algreen" width="150" height="42" class="h-10 w-auto" />
+      <p class="mt-5 max-w-xs text-sm leading-relaxed text-white/60">
+        {t.home.heroSubtitle}
+      </p>
+      <div class="mt-6 flex gap-3">
+        <a
+          href={company.socials.facebook}
+          target="_blank"
+          rel="noopener"
+          aria-label="Facebook"
+          class="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 transition-colors hover:border-gold hover:text-gold"
+        >
+          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"
+            ><path
+              d="M9 8H6v4h3v12h5V12h3.642L18 8h-4V6.333C14 5.378 14.192 5 15.115 5H18V0h-3.808C10.596 0 9 1.583 9 4.615V8z"
+            ></path></svg
+          >
+        </a>
+        <a
+          href={company.socials.instagram}
+          target="_blank"
+          rel="noopener"
+          aria-label="Instagram"
+          class="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 transition-colors hover:border-gold hover:text-gold"
+        >
+          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"
+            ><path
+              d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.43.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 01-1.38-.9 3.7 3.7 0 01-.9-1.38c-.16-.43-.36-1.06-.41-2.23C2.21 15.58 2.2 15.2 2.2 12s0-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.42 2.21 8.8 2.2 12 2.2zm0 3.3a6.5 6.5 0 100 13 6.5 6.5 0 000-13zm0 10.7a4.2 4.2 0 110-8.4 4.2 4.2 0 010 8.4zm6.4-10.9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"
+            ></path></svg
+          >
+        </a>
+      </div>
+    </div>
+
+    <!-- Quick links -->
+    <nav aria-label="Footer" class="lg:col-span-1">
+      <h3 class="mb-4 text-sm font-semibold uppercase tracking-wider text-white">Algreen</h3>
+      <ul class="space-y-2.5 text-sm">
+        {
+          navItems.map((item) => (
+            <li>
+              <a href={routes[item.key][lang]} class="transition-colors hover:text-gold">
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a href={company.configurator} class="text-gold transition-colors hover:text-gold-light">
+            {t.nav.configurator}
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Branches -->
+    {
+      company.branches.map((b) => (
+        <div>
+          <h3 class="mb-4 text-sm font-semibold uppercase tracking-wider text-white">
+            {t.contact.branchOffice} {txt(b.city)}
+          </h3>
+          <address class="space-y-2.5 text-sm not-italic text-white/70">
+            <p>{txt(b.street)}</p>
+            <p>{txt(b.postal)}</p>
+            {b.phones.map((p) => (
+              <p>
+                <a href={`tel:${p.replace(/[^+\d]/g, '')}`} class="transition-colors hover:text-gold">
+                  {p}
+                </a>
+              </p>
+            ))}
+            <p>
+              <a href={`mailto:${b.email}`} class="transition-colors hover:text-gold">
+                {b.email}
+              </a>
+            </p>
+          </address>
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="border-t border-white/10">
+    <div class="container-px flex flex-col items-center justify-between gap-3 py-6 text-xs text-white/50 sm:flex-row">
+      <p>© {year} {company.legalName}. {t.common.allRights}</p>
+      <p>Bulevar Svetog Cara Konstantina 168, Niš · Beograd-Zemun</p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,198 @@
+---
+import { useTranslations } from '../i18n/ui';
+import { routes, altLangPath, type RouteKey } from '../i18n/routes';
+import { company, type Lang } from '../i18n/config';
+
+interface Props {
+  lang: Lang;
+  routeKey: RouteKey;
+}
+const { lang, routeKey } = Astro.props;
+const t = useTranslations(lang);
+
+const navItems: { key: RouteKey; label: string }[] = [
+  { key: 'home', label: t.nav.home },
+  { key: 'about', label: t.nav.about },
+  { key: 'works', label: t.nav.works },
+  { key: 'equipment', label: t.nav.equipment },
+  { key: 'technical', label: t.nav.technical },
+  { key: 'contact', label: t.nav.contact },
+];
+
+const otherLangHref = altLangPath(routeKey, lang);
+const otherLang: Lang = lang === 'sr' ? 'en' : 'sr';
+const logoHref = routes.home[lang];
+---
+
+<header
+  id="site-header"
+  class="fixed inset-x-0 top-0 z-50 transition-colors duration-300"
+  data-header
+>
+  <div class="container-px flex items-center justify-between py-4">
+    <!-- Logo -->
+    <a href={logoHref} class="relative z-10 flex items-center" aria-label="Algreen">
+      <img
+        src="/img/newlogobeli.png"
+        alt="Algreen"
+        width="140"
+        height="40"
+        class="h-9 w-auto"
+        data-logo-light
+      />
+      <img
+        src="/img/newlogo.png"
+        alt="Algreen"
+        width="140"
+        height="40"
+        class="hidden h-9 w-auto"
+        data-logo-dark
+      />
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden items-center gap-7 lg:flex" aria-label="Glavni meni">
+      {
+        navItems.map((item) => (
+          <a
+            href={routes[item.key][lang]}
+            class:list={[
+              'text-sm font-medium uppercase tracking-wide transition-colors hover:text-gold',
+              routeKey === item.key ? 'text-gold' : 'text-white/90',
+            ]}
+            data-nav-link
+            aria-current={routeKey === item.key ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <a
+        href={company.configurator}
+        class="text-sm font-semibold uppercase tracking-wide text-gold transition-colors hover:text-gold-light"
+      >
+        {t.nav.configurator}
+      </a>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <!-- Language switcher -->
+      <a
+        href={otherLangHref}
+        class="hidden rounded-full border border-white/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-white transition-colors hover:bg-white hover:text-ink-900 lg:inline-block"
+        data-lang-switch
+        hreflang={otherLang}
+      >
+        {otherLang.toUpperCase()}
+      </a>
+
+      <!-- Mobile menu button -->
+      <button
+        type="button"
+        class="relative z-[60] flex h-10 w-10 items-center justify-center rounded-md text-white lg:hidden"
+        aria-label={t.common.menu}
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-toggle
+      >
+        <span class="sr-only">{t.common.menu}</span>
+        <svg class="h-6 w-6" data-icon-open fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+        <svg class="hidden h-6 w-6" data-icon-close fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu panel -->
+  <div
+    id="mobile-menu"
+    class="invisible fixed inset-0 z-50 flex translate-x-full flex-col bg-ink-900 px-6 pb-10 pt-24 text-white transition-transform duration-300 ease-in-out lg:hidden"
+    data-mobile-menu
+  >
+    <nav class="flex flex-col gap-1" aria-label="Mobilni meni">
+      {
+        navItems.map((item) => (
+          <a
+            href={routes[item.key][lang]}
+            class:list={[
+              'border-b border-white/10 py-4 text-lg font-medium uppercase tracking-wide',
+              routeKey === item.key ? 'text-gold' : 'text-white',
+            ]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <a
+        href={company.configurator}
+        class="border-b border-white/10 py-4 text-lg font-semibold uppercase tracking-wide text-gold"
+      >
+        {t.nav.configurator}
+      </a>
+    </nav>
+    <a
+      href={otherLangHref}
+      class="mt-8 inline-flex w-fit rounded-full border border-white/40 px-5 py-2 text-sm font-semibold uppercase tracking-wider"
+      hreflang={otherLang}
+    >
+      {otherLang === 'sr' ? 'Srpski' : 'English'} ({otherLang.toUpperCase()})
+    </a>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector('[data-header]') as HTMLElement | null;
+  const toggle = document.querySelector('[data-menu-toggle]') as HTMLButtonElement | null;
+  const menu = document.querySelector('[data-mobile-menu]') as HTMLElement | null;
+  const iconOpen = document.querySelector('[data-icon-open]') as SVGElement | null;
+  const iconClose = document.querySelector('[data-icon-close]') as SVGElement | null;
+  const logoLight = document.querySelector('[data-logo-light]') as HTMLImageElement | null;
+  const logoDark = document.querySelector('[data-logo-dark]') as HTMLImageElement | null;
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
+  const langSwitch = document.querySelector('[data-lang-switch]') as HTMLElement | null;
+
+  let menuOpen = false;
+
+  function setMenu(open: boolean) {
+    menuOpen = open;
+    if (!menu || !toggle) return;
+    menu.classList.toggle('translate-x-full', !open);
+    menu.classList.toggle('invisible', !open);
+    iconOpen?.classList.toggle('hidden', open);
+    iconClose?.classList.toggle('hidden', !open);
+    toggle.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  toggle?.addEventListener('click', () => setMenu(!menuOpen));
+
+  // Solid header on scroll (and over the menu) — swaps logo + link colors.
+  function onScroll() {
+    const scrolled = window.scrollY > 30;
+    if (!header) return;
+    header.classList.toggle('bg-white', scrolled);
+    header.classList.toggle('shadow-md', scrolled);
+    logoLight?.classList.toggle('hidden', scrolled);
+    logoDark?.classList.toggle('hidden', !scrolled);
+    navLinks.forEach((l) => {
+      if (l.getAttribute('aria-current') === 'page') return;
+      l.classList.toggle('text-white/90', !scrolled);
+      l.classList.toggle('text-ink-800', scrolled);
+    });
+    if (langSwitch) {
+      langSwitch.classList.toggle('border-white/40', !scrolled);
+      langSwitch.classList.toggle('text-white', !scrolled);
+      langSwitch.classList.toggle('border-ink-900/30', scrolled);
+      langSwitch.classList.toggle('text-ink-900', scrolled);
+    }
+    // keep mobile toggle visible on white header
+    toggle?.classList.toggle('text-white', !scrolled);
+    toggle?.classList.toggle('text-ink-900', scrolled);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>

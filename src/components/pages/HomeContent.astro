@@ -1,0 +1,190 @@
+---
+import { useTranslations } from '../../i18n/ui';
+import { path } from '../../i18n/routes';
+import { company, stats, type Lang } from '../../i18n/config';
+import CtaBand from '../CtaBand.astro';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const featureIcons = ['lock', 'gear', 'finger'];
+const systems = t.technical.systems;
+---
+
+<!-- HERO -->
+<section class="relative flex min-h-[88vh] items-center overflow-hidden bg-ink-900">
+  <img
+    src="/img/hero-door-new.jpg"
+    alt="Algreen aluminijumska ulazna vrata"
+    fetchpriority="high"
+    width="1920"
+    height="1280"
+    class="absolute inset-0 h-full w-full object-cover object-center"
+  />
+  <div class="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/70 to-ink-900/30"></div>
+  <div class="container-px relative pt-28">
+    <div class="max-w-2xl animate-fade-up">
+      <p class="eyebrow text-gold-light">{t.home.heroEyebrow}</p>
+      <h1 class="text-5xl font-bold leading-[1.05] text-white sm:text-6xl lg:text-7xl">
+        {t.home.heroTitle}
+      </h1>
+      <p class="mt-6 max-w-xl text-lg text-white/80">{t.home.heroSubtitle}</p>
+      <div class="mt-9 flex flex-wrap gap-4">
+        <a href={company.configurator} class="btn-primary">{t.home.heroCtaPrimary}</a>
+        <a href={path('works', lang)} class="btn-ghost">{t.home.heroCtaSecondary}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="section">
+  <div class="container-px grid items-center gap-12 lg:grid-cols-2">
+    <div class="reveal">
+      <p class="eyebrow">{company.name}</p>
+      <h2 class="text-3xl font-semibold text-ink-900 sm:text-4xl">{t.home.introHeading}</h2>
+      <p class="mt-5 leading-relaxed text-ink-700">{t.home.introP1}</p>
+      <p class="mt-4 leading-relaxed text-ink-700">{t.home.introP2}</p>
+      <a href={path('about', lang)} class="btn-outline mt-8">{t.common.learnMore}</a>
+    </div>
+    <div class="reveal">
+      <img
+        src="/img/hero-door-new-2.jpg"
+        alt={t.home.introHeading}
+        loading="lazy"
+        width="900"
+        height="1100"
+        class="aspect-[4/5] w-full rounded-tl-[3rem] rounded-br-[3rem] object-cover shadow-2xl"
+      />
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section bg-brand-50">
+  <div class="container-px">
+    <div class="mx-auto mb-14 max-w-2xl text-center reveal">
+      <p class="eyebrow">{t.home.featuresHeading}</p>
+      <h2 class="text-3xl font-semibold text-ink-900 sm:text-4xl">{t.home.introHeading}</h2>
+    </div>
+    <div class="grid gap-7 md:grid-cols-3">
+      {
+        t.home.features.map((f, i) => (
+          <article class="group rounded-2xl bg-white p-8 shadow-sm ring-1 ring-ink-900/5 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl reveal">
+            <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-ink-900 text-gold transition-colors group-hover:bg-gold group-hover:text-ink-900">
+              {featureIcons[i] === 'lock' && (
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 10-8 0v4M5 11h14v9a1 1 0 01-1 1H6a1 1 0 01-1-1v-9z"/></svg>
+              )}
+              {featureIcons[i] === 'gear' && (
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M10.3 3.3a1 1 0 011.4 0l.9.9a8 8 0 011.6.6l1.2-.3a1 1 0 011.1.5l1 1.7a1 1 0 01-.1 1.2l-.8.9a8 8 0 010 1.7l.8.9a1 1 0 01.1 1.2l-1 1.7a1 1 0 01-1.1.5l-1.2-.3a8 8 0 01-1.6.6l-.9.9a1 1 0 01-1.4 0l-.9-.9a8 8 0 01-1.6-.6l-1.2.3a1 1 0 01-1.1-.5l-1-1.7a1 1 0 01.1-1.2l.8-.9a8 8 0 010-1.7l-.8-.9a1 1 0 01-.1-1.2l1-1.7a1 1 0 011.1-.5l1.2.3a8 8 0 011.6-.6l.9-.9z"/><circle cx="12" cy="12" r="2.6"/></svg>
+              )}
+              {featureIcons[i] === 'finger' && (
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 11v3m0-7a4 4 0 014 4v1m-8-1a4 4 0 014-4M5 9a8 8 0 0114 0v5M8 21a12 12 0 01-1-5 5 5 0 0110 0v2m-2 3a16 16 0 01-1-5"/></svg>
+              )}
+            </div>
+            <h3 class="text-xl font-semibold text-ink-900">{f.title}</h3>
+            <p class="mt-3 text-sm leading-relaxed text-ink-700">{f.text}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CONFIGURATOR -->
+<section class="section overflow-hidden">
+  <div class="container-px grid items-center gap-12 lg:grid-cols-2">
+    <div class="order-2 reveal lg:order-1">
+      <img
+        src="/img/mockup.webp"
+        alt={t.home.configHeading}
+        loading="lazy"
+        width="1000"
+        height="700"
+        class="w-full drop-shadow-2xl"
+      />
+    </div>
+    <div class="order-1 reveal lg:order-2">
+      <p class="eyebrow">{t.common.configurator}</p>
+      <h2 class="text-3xl font-semibold text-ink-900 sm:text-4xl">{t.home.configHeading}</h2>
+      <p class="mt-5 text-lg font-medium text-gold-dark">{t.home.configP1}</p>
+      <p class="mt-4 leading-relaxed text-ink-700">{t.home.configP2}</p>
+      <p class="mt-4 leading-relaxed text-ink-700">{t.home.configP3}</p>
+      <a href={company.configurator} class="btn-dark mt-8">{t.common.configurator}</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="bg-ink-900 py-16">
+  <div class="container-px grid grid-cols-2 gap-8 text-center lg:grid-cols-4">
+    {
+      stats.map((s) => (
+        <div class="reveal">
+          <div class="text-4xl font-bold text-gold sm:text-5xl">{s.value}</div>
+          <div class="mt-2 text-sm uppercase tracking-wider text-white/60">
+            {t.statsLabels[s.key as keyof typeof t.statsLabels]}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<!-- SYSTEMS -->
+<section class="section bg-brand-50">
+  <div class="container-px">
+    <div class="mx-auto mb-14 max-w-2xl text-center reveal">
+      <p class="eyebrow">{t.home.systemsHeading}</p>
+      <h2 class="text-3xl font-semibold text-ink-900 sm:text-4xl">{t.home.systemsHeading}</h2>
+      <p class="mt-4 text-ink-700">{t.home.systemsSubheading}</p>
+    </div>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        systems.map((s) => (
+          <a href={path('technical', lang)} class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-ink-900/5 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl reveal">
+            <div class="aspect-[4/3] overflow-hidden bg-brand-100">
+              <img src={s.img} alt={s.name} loading="lazy" class="h-full w-full object-contain p-6 transition-transform duration-500 group-hover:scale-105" />
+            </div>
+            <div class="border-t border-ink-900/5 p-5">
+              <h3 class="text-lg font-semibold text-ink-900">{s.name}</h3>
+              <p class="mt-1 text-sm text-ink-700">{s.wing}</p>
+              <p class="mt-3 text-sm font-semibold text-gold-dark">{t.technical.udValue}: {s.ud}</p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CATALOGS -->
+<section class="section">
+  <div class="container-px">
+    <div class="mx-auto mb-14 max-w-2xl text-center reveal">
+      <p class="eyebrow">PDF</p>
+      <h2 class="text-3xl font-semibold text-ink-900 sm:text-4xl">{t.home.catalogHeading}</h2>
+      <p class="mt-4 text-ink-700">{t.home.catalogSubheading}</p>
+    </div>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        t.home.catalogs.map((c) => (
+          <a href={c.file} target="_blank" rel="noopener" class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-ink-900/5 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl reveal">
+            <div class="aspect-[3/4] overflow-hidden bg-brand-50">
+              <img src={c.img} alt={c.title} loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            </div>
+            <div class="flex items-center justify-between gap-2 border-t border-ink-900/5 p-4">
+              <span class="text-sm font-medium text-ink-900">{c.title}</span>
+              <svg class="h-5 w-5 shrink-0 text-gold-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<CtaBand lang={lang} variant="configurator" />

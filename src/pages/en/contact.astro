@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContactContent from '../../components/pages/ContactContent.astro';
+import { useTranslations } from '../../i18n/ui';
+const lang = 'en' as const;
+const t = useTranslations(lang);
+---
+
+<BaseLayout lang={lang} routeKey="contact" title={t.contact.metaTitle} description={t.contact.metaDescription} ogImage="/img/kontakt.jpg">
+  <ContactContent lang={lang} />
+</BaseLayout>

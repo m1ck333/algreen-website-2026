@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EquipmentContent from '../../components/pages/EquipmentContent.astro';
+import { useTranslations } from '../../i18n/ui';
+const lang = 'en' as const;
+const t = useTranslations(lang);
+---
+
+<BaseLayout lang={lang} routeKey="equipment" title={t.equipment.metaTitle} description={t.equipment.metaDescription}>
+  <EquipmentContent lang={lang} />
+</BaseLayout>

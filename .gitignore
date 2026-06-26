@@ -1,0 +1,22 @@
+# build output
+dist/
+.output/
+
+# dependencies
+node_modules/
+
+# astro
+.astro/
+
+# environment
+.env
+.env.production
+
+# local Claude Code settings (personal permissions)
+.claude/settings.local.json
+
+# macOS
+.DS_Store
+
+# logs
+npm-debug.log*

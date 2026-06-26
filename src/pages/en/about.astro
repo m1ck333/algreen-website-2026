@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AboutContent from '../../components/pages/AboutContent.astro';
+import { useTranslations } from '../../i18n/ui';
+const lang = 'en' as const;
+const t = useTranslations(lang);
+---
+
+<BaseLayout lang={lang} routeKey="about" title={t.about.metaTitle} description={t.about.metaDescription}>
+  <AboutContent lang={lang} />
+</BaseLayout>

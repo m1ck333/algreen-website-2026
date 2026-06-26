@@ -1,0 +1,125 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { company } from '../i18n/config';
+import { routes, type RouteKey } from '../i18n/routes';
+import type { Lang } from '../i18n/config';
+
+interface Props {
+  lang: Lang;
+  routeKey: RouteKey;
+  title: string;
+  description: string;
+  ogImage?: string;
+}
+
+const { lang, routeKey, title, description, ogImage = '/img/hero-door-new.jpg' } = Astro.props;
+
+const site = Astro.site?.href.replace(/\/$/, '') ?? 'https://algreen.rs';
+const srPath = routes[routeKey].sr;
+const enPath = routes[routeKey].en;
+const canonical = site + routes[routeKey][lang];
+const ogImageUrl = ogImage.startsWith('http') ? ogImage : site + ogImage;
+const htmlLang = lang === 'sr' ? 'sr-RS' : 'en';
+
+// LocalBusiness structured data — helps local SEO for "ulazna vrata Niš/Beograd".
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'HomeAndConstructionBusiness',
+  name: company.name,
+  legalName: company.legalName,
+  url: site + '/',
+  image: ogImageUrl,
+  description,
+  sameAs: [company.socials.facebook, company.socials.instagram],
+  areaServed: 'RS',
+  location: company.branches.map((b) => ({
+    '@type': 'Place',
+    name: `${company.name} ${typeof b.city === 'string' ? b.city : b.city[lang]}`,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: typeof b.street === 'string' ? b.street : b.street[lang],
+      addressLocality: typeof b.city === 'string' ? b.city : b.city[lang],
+      addressCountry: 'RS',
+    },
+    telephone: b.phones[0],
+    email: b.email,
+  })),
+};
+---
+
+<!doctype html>
+<html lang={htmlLang} class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- hreflang alternates -->
+    <link rel="alternate" hreflang="sr-RS" href={site + srPath} />
+    <link rel="alternate" hreflang="en" href={site + enPath} />
+    <link rel="alternate" hreflang="x-default" href={site + srPath} />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="/img/favicon.png" />
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
+    <meta name="theme-color" content="#1f1c1c" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={company.name} />
+    <meta property="og:locale" content={lang === 'sr' ? 'sr_RS' : 'en_US'} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:bg-ink-900 focus:px-4 focus:py-2 focus:text-white"
+      >Skip to content</a
+    >
+    <Header lang={lang} routeKey={routeKey} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+
+    <script>
+      // Lightweight scroll-reveal — no library needed.
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          }
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+      );
+      document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+    </script>
+  </body>
+</html>

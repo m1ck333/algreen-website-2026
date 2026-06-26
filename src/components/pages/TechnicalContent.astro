@@ -1,0 +1,101 @@
+---
+import { useTranslations } from '../../i18n/ui';
+import { type Lang } from '../../i18n/config';
+import PageHero from '../PageHero.astro';
+import CtaBand from '../CtaBand.astro';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const systems = t.technical.systems;
+---
+
+<PageHero title={t.technical.title} subtitle={t.technical.subtitle} eyebrow={t.nav.technical} image="/img/header.jpg" />
+
+<!-- Intro -->
+<section class="section">
+  <div class="container-px max-w-3xl reveal">
+    <h2 class="text-3xl font-semibold text-ink-900 sm:text-4xl">{t.technical.subtitle}</h2>
+    <p class="mt-5 leading-relaxed text-ink-700">{t.technical.intro}</p>
+  </div>
+</section>
+
+<!-- System cards -->
+<section class="bg-brand-50 section">
+  <div class="container-px">
+    <h2 class="mb-12 text-center text-3xl font-semibold text-ink-900 sm:text-4xl reveal">{t.technical.systemsHeading}</h2>
+    <div class="grid gap-8 lg:grid-cols-2">
+      {
+        systems.map((s) => (
+          <article class="grid gap-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-ink-900/5 sm:grid-cols-[160px_1fr] reveal">
+            <div class="flex items-center justify-center rounded-xl bg-brand-50 p-4">
+              <img src={s.img} alt={`${s.name} ${t.technical.sectionLabel}`} loading="lazy" class="max-h-44 w-auto object-contain" />
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-ink-900">{s.name}</h3>
+              <p class="text-sm text-ink-700">{s.wing}</p>
+              <dl class="mt-4 space-y-2 text-sm">
+                <div class="flex justify-between gap-3 border-b border-ink-900/5 pb-2">
+                  <dt class="text-ink-700">{t.technical.panelLabel}</dt>
+                  <dd class="text-right font-medium text-ink-900">{s.panel}</dd>
+                </div>
+                <div class="flex justify-between gap-3 border-b border-ink-900/5 pb-2">
+                  <dt class="text-ink-700">{t.technical.glassLabel}</dt>
+                  <dd class="text-right font-medium text-ink-900">{s.glass}</dd>
+                </div>
+                <div class="flex justify-between gap-3 border-b border-ink-900/5 pb-2">
+                  <dt class="text-ink-700">{t.technical.hinges}</dt>
+                  <dd class="text-right font-medium text-ink-900">{s.hinges}</dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                  <dt class="font-semibold text-gold-dark">{t.technical.udValue}</dt>
+                  <dd class="text-right font-bold text-gold-dark">{s.ud}</dd>
+                </div>
+              </dl>
+              <a href={s.pdf} target="_blank" rel="noopener" class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-ink-900 transition-colors hover:text-gold-dark">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+                PDF
+              </a>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Comparison table -->
+<section class="section">
+  <div class="container-px overflow-x-auto reveal">
+    <table class="w-full min-w-[640px] border-collapse text-left text-sm">
+      <thead>
+        <tr class="border-b-2 border-ink-900">
+          <th class="py-4 pr-4 font-semibold text-ink-900">{t.technical.systemsHeading}</th>
+          {systems.map((s) => <th class="px-4 py-4 font-bold text-ink-900">{s.name}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b border-ink-900/10">
+          <td class="py-4 pr-4 font-medium text-ink-700">{t.technical.panelLabel}</td>
+          {systems.map((s) => <td class="px-4 py-4 text-ink-700">{s.panel}</td>)}
+        </tr>
+        <tr class="border-b border-ink-900/10 bg-brand-50/50">
+          <td class="py-4 pr-4 font-medium text-ink-700">{t.technical.glassLabel}</td>
+          {systems.map((s) => <td class="px-4 py-4 text-ink-700">{s.glass}</td>)}
+        </tr>
+        <tr class="border-b border-ink-900/10">
+          <td class="py-4 pr-4 font-medium text-ink-700">{t.technical.hinges}</td>
+          {systems.map((s) => <td class="px-4 py-4 text-ink-700">{s.hinges}</td>)}
+        </tr>
+        <tr class="bg-ink-900/5">
+          <td class="py-4 pr-4 font-semibold text-gold-dark">{t.technical.udValue}</td>
+          {systems.map((s) => <td class="px-4 py-4 font-bold text-gold-dark">{s.ud}</td>)}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<CtaBand lang={lang} variant="configurator" />

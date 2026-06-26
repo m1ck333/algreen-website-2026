@@ -1,0 +1,117 @@
+---
+import { useTranslations } from '../../i18n/ui';
+import { company, type Lang } from '../../i18n/config';
+import PageHero from '../PageHero.astro';
+import CtaBand from '../CtaBand.astro';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Small visual galleries reused from the legacy asset set.
+const handles = ['/img/rukohvat1.png', '/img/rukohvat2.png', '/img/rukohvat3.png', '/img/kvaka1.png', '/img/kvaka2.png', '/img/kvaka3.png'];
+const locks = ['/img/brava5.png', '/img/brava6.png', '/img/brava7.png', '/img/cilindar1.png', '/img/sarke1.png', '/img/rozeta1.png'];
+---
+
+<PageHero title={t.equipment.title} subtitle={t.equipment.subtitle} eyebrow={t.nav.equipment} image="/img/header.jpg" />
+
+<!-- Intro -->
+<section class="section">
+  <div class="container-px max-w-3xl reveal">
+    <h2 class="text-3xl font-semibold text-ink-900 sm:text-4xl">{t.equipment.subtitle}</h2>
+    <p class="mt-5 leading-relaxed text-ink-700">{t.equipment.intro}</p>
+  </div>
+
+  <!-- Categories -->
+  <div class="container-px mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    {
+      t.equipment.categories.map((c) => (
+        <article class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-ink-900/5 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl reveal">
+          <div class="aspect-square overflow-hidden bg-brand-50">
+            <img src={c.img} alt={c.title} loading="lazy" class="h-full w-full object-contain p-8 transition-transform duration-500 group-hover:scale-105" />
+          </div>
+          <div class="border-t border-ink-900/5 p-6">
+            <h3 class="text-lg font-semibold text-ink-900">{c.title}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink-700">{c.text}</p>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>
+
+<!-- Visual strips -->
+<section class="bg-brand-50 section">
+  <div class="container-px space-y-12">
+    <div class="reveal">
+      <h3 class="mb-6 text-2xl font-semibold text-ink-900">{t.equipment.categories[1].title}</h3>
+      <div class="grid grid-cols-3 gap-4 sm:grid-cols-6">
+        {handles.map((h) => (
+          <div class="flex aspect-square items-center justify-center rounded-xl bg-white p-4 shadow-sm">
+            <img src={h} alt="" loading="lazy" class="max-h-full w-auto object-contain" />
+          </div>
+        ))}
+      </div>
+    </div>
+    <div class="reveal">
+      <h3 class="mb-6 text-2xl font-semibold text-ink-900">{t.equipment.categories[0].title}</h3>
+      <div class="grid grid-cols-3 gap-4 sm:grid-cols-6">
+        {locks.map((h) => (
+          <div class="flex aspect-square items-center justify-center rounded-xl bg-white p-4 shadow-sm">
+            <img src={h} alt="" loading="lazy" class="max-h-full w-auto object-contain" />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Smart access control -->
+<section class="section">
+  <div class="container-px">
+    <div class="mx-auto mb-12 max-w-2xl text-center reveal">
+      <p class="eyebrow">{t.equipment.categories[2].title}</p>
+      <h2 class="text-3xl font-semibold text-ink-900 sm:text-4xl">{t.equipment.accessHeading}</h2>
+    </div>
+    <div class="grid items-center gap-10 lg:grid-cols-2">
+      <div class="overflow-hidden rounded-2xl reveal">
+        <img src="/img/fingerprint2.png" alt={t.equipment.fingerprint} loading="lazy" class="w-full bg-ink-900 object-contain p-10" />
+      </div>
+      <div class="reveal">
+        <h3 class="text-2xl font-semibold text-ink-900">{t.equipment.fingerprint}</h3>
+        <div class="mt-8">
+          <h4 class="text-lg font-semibold text-gold-dark">{t.equipment.voiceAssistant}</h4>
+          <ul class="mt-4 space-y-3">
+            {
+              t.equipment.voiceBullets.map((b) => (
+                <li class="flex gap-3 text-ink-700">
+                  <svg class="mt-1 h-5 w-5 shrink-0 text-gold-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>{b}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Mailbox -->
+<section class="bg-brand-50 section">
+  <div class="container-px grid items-center gap-10 lg:grid-cols-2">
+    <div class="reveal">
+      <p class="eyebrow">{t.equipment.categories[3].title}</p>
+      <h2 class="text-3xl font-semibold text-ink-900 sm:text-4xl">{t.equipment.boxHeading}</h2>
+      <p class="mt-5 leading-relaxed text-ink-700">{t.equipment.boxText}</p>
+      <a href={company.configurator} class="btn-dark mt-8">{t.common.configurator}</a>
+    </div>
+    <div class="reveal">
+      <img src="/img/sanduce.jpg" alt={t.equipment.boxHeading} loading="lazy" class="w-full rounded-2xl object-cover shadow-xl" />
+    </div>
+  </div>
+</section>
+
+<CtaBand lang={lang} variant="configurator" />

@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import WorksContent from '../components/pages/WorksContent.astro';
+import { useTranslations } from '../i18n/ui';
+const lang = 'sr' as const;
+const t = useTranslations(lang);
+---
+
+<BaseLayout lang={lang} routeKey="works" title={t.works.metaTitle} description={t.works.metaDescription} ogImage="/img/19.webp">
+  <WorksContent lang={lang} />
+</BaseLayout>

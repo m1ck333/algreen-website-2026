@@ -1,0 +1,19 @@
+{
+  "name": "algreen-site-2026",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Algreen — ekskluzivna aluminijumska ulazna vrata. Modern marketing site.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^4.16.18",
+    "@astrojs/tailwind": "^5.1.4",
+    "tailwindcss": "^3.4.17",
+    "sharp": "^0.33.5"
+  }
+}
