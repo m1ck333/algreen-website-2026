@@ -94,14 +94,29 @@ const txt = (v: string | Record<Lang, string>) => (typeof v === 'string' ? v : v
   </div>
 </section>
 
-<!-- Map -->
+<!-- Maps — one per branch -->
 <section class="pb-0">
-  <iframe
-    title="Algreen Niš"
-    src="https://www.google.com/maps?q=Bulevar+Svetog+Cara+Konstantina+168,+Niš&output=embed"
-    class="h-[420px] w-full border-0 grayscale"
-    loading="lazy"
-    referrerpolicy="no-referrer-when-downgrade"></iframe>
+  <div class="grid md:grid-cols-2">
+    {
+      company.branches.map((b) => {
+        const q = encodeURIComponent(`${txt(b.street)}, ${txt(b.postal)}`);
+        return (
+          <div class="relative">
+            <span class="absolute left-4 top-4 z-10 rounded-full bg-ink-900/90 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur-sm">
+              {t.contact.branchOffice} {txt(b.city)}
+            </span>
+            <iframe
+              title={`Algreen ${txt(b.city)}`}
+              src={`https://www.google.com/maps?q=${q}&output=embed`}
+              class="h-[420px] w-full border-0 grayscale transition-all duration-500 hover:grayscale-0"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        );
+      })
+    }
+  </div>
 </section>
 
 <script>
