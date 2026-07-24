@@ -19,14 +19,14 @@ const gallery = ids.map((n) => `/img/${n}.webp`);
 
 <section class="section">
   <div class="container-px">
-    <p class="mx-auto mb-12 max-w-2xl text-center text-lg leading-relaxed text-ink-700 reveal">{t.works.intro}</p>
+    <p class="mx-auto mb-12 max-w-2xl text-center text-lg leading-relaxed text-white/70 reveal">{t.works.intro}</p>
 
     <div class="columns-2 gap-4 sm:columns-3 lg:columns-4 [&>*]:mb-4">
       {
         gallery.map((src, i) => (
           <button
             type="button"
-            class="group block w-full overflow-hidden rounded-xl bg-cream-100 reveal"
+            class="group block w-full overflow-hidden rounded-xl bg-white/5 reveal"
             data-lightbox-trigger
             data-src={src}
             aria-label={`${t.works.title} ${i + 1}`}

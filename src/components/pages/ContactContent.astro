@@ -19,33 +19,33 @@ const txt = (v: string | Record<Lang, string>) => (typeof v === 'string' ? v : v
     <div class="space-y-6">
       {
         company.branches.map((b) => (
-          <div class="rounded-2xl bg-white p-7 shadow-sm ring-1 ring-ink-900/5 reveal">
-            <h2 class="text-xl font-semibold text-ink-900">
+          <div class="rounded-2xl bg-white/[0.04] p-7 ring-1 ring-white/10 reveal">
+            <h2 class="text-xl font-semibold text-white">
               {t.contact.branchOffice} {txt(b.city)}
             </h2>
             <dl class="mt-5 space-y-4 text-sm">
               <div class="flex gap-3">
-                <svg class="mt-0.5 h-5 w-5 shrink-0 text-gold-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                <svg class="mt-0.5 h-5 w-5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
                 <div>
-                  <dt class="font-medium text-ink-900">{t.contact.address}</dt>
-                  <dd class="text-ink-700">{txt(b.street)}, {txt(b.postal)}</dd>
-                  <a href={b.mapsUrl} target="_blank" rel="noopener" class="mt-1 inline-block text-xs font-semibold text-gold-dark hover:underline">{t.contact.openMaps} →</a>
+                  <dt class="font-medium text-white">{t.contact.address}</dt>
+                  <dd class="text-white/70">{txt(b.street)}, {txt(b.postal)}</dd>
+                  <a href={b.mapsUrl} target="_blank" rel="noopener" class="mt-1 inline-block text-xs font-semibold text-accent hover:underline">{t.contact.openMaps} →</a>
                 </div>
               </div>
               <div class="flex gap-3">
-                <svg class="mt-0.5 h-5 w-5 shrink-0 text-gold-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h2.3a1 1 0 011 .76l1 4a1 1 0 01-.3 1L8 10.5a14 14 0 005.5 5.5l1.7-1.3a1 1 0 011-.2l4 1a1 1 0 01.8 1V19a2 2 0 01-2 2A16 16 0 013 5z"/></svg>
+                <svg class="mt-0.5 h-5 w-5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h2.3a1 1 0 011 .76l1 4a1 1 0 01-.3 1L8 10.5a14 14 0 005.5 5.5l1.7-1.3a1 1 0 011-.2l4 1a1 1 0 01.8 1V19a2 2 0 01-2 2A16 16 0 013 5z"/></svg>
                 <div>
-                  <dt class="font-medium text-ink-900">{t.contact.phone}</dt>
+                  <dt class="font-medium text-white">{t.contact.phone}</dt>
                   {b.phones.map((p) => (
-                    <dd><a href={`tel:${p.replace(/[^+\d]/g, '')}`} class="text-ink-700 hover:text-gold-dark">{p}</a></dd>
+                    <dd><a href={`tel:${p.replace(/[^+\d]/g, '')}`} class="text-white/70 hover:text-accent">{p}</a></dd>
                   ))}
                 </div>
               </div>
               <div class="flex gap-3">
-                <svg class="mt-0.5 h-5 w-5 shrink-0 text-gold-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7l9 6 9-6M4 5h16a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1z"/></svg>
+                <svg class="mt-0.5 h-5 w-5 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7l9 6 9-6M4 5h16a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1z"/></svg>
                 <div>
-                  <dt class="font-medium text-ink-900">{t.contact.email}</dt>
-                  <dd><a href={`mailto:${company.email}`} class="text-ink-700 hover:text-gold-dark">{company.email}</a></dd>
+                  <dt class="font-medium text-white">{t.contact.email}</dt>
+                  <dd><a href={`mailto:${company.email}`} class="text-white/70 hover:text-accent">{company.email}</a></dd>
                 </div>
               </div>
             </dl>
@@ -55,7 +55,7 @@ const txt = (v: string | Record<Lang, string>) => (typeof v === 'string' ? v : v
     </div>
 
     <!-- Inquiry form -->
-    <div class="rounded-2xl bg-ink-900 p-8 text-white reveal">
+    <div class="rounded-2xl bg-white/[0.04] p-8 text-white ring-1 ring-white/10 reveal">
       <h2 class="text-2xl font-semibold">{t.contact.formHeading}</h2>
       <p class="mt-2 text-sm text-white/60">{t.contact.formNote}</p>
       <form
@@ -70,20 +70,20 @@ const txt = (v: string | Record<Lang, string>) => (typeof v === 'string' ? v : v
         <div class="grid gap-4 sm:grid-cols-2">
           <label class="block">
             <span class="mb-1.5 block text-sm text-white/70">{t.contact.formName}</span>
-            <input type="text" name="name" required class="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-gold focus:outline-none" />
+            <input type="text" name="name" required class="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-accent focus:outline-none" />
           </label>
           <label class="block">
             <span class="mb-1.5 block text-sm text-white/70">{t.contact.formPhone}</span>
-            <input type="tel" name="phone" class="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-gold focus:outline-none" />
+            <input type="tel" name="phone" class="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-accent focus:outline-none" />
           </label>
         </div>
         <label class="block">
           <span class="mb-1.5 block text-sm text-white/70">{t.contact.formEmail}</span>
-          <input type="email" name="email" required class="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-gold focus:outline-none" />
+          <input type="email" name="email" required class="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-accent focus:outline-none" />
         </label>
         <label class="block">
           <span class="mb-1.5 block text-sm text-white/70">{t.contact.formMessage}</span>
-          <textarea name="message" rows="5" required class="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-gold focus:outline-none"></textarea>
+          <textarea name="message" rows="5" required class="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-accent focus:outline-none"></textarea>
         </label>
         <!-- Honeypot: hidden from humans, bots tend to fill it -->
         <input type="text" name="company" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
@@ -95,20 +95,20 @@ const txt = (v: string | Record<Lang, string>) => (typeof v === 'string' ? v : v
 </section>
 
 <!-- Maps — one per branch -->
-<section class="pb-0">
-  <div class="grid md:grid-cols-2">
+<section class="container-px pb-16 sm:pb-20">
+  <div class="grid gap-5 md:grid-cols-2">
     {
       company.branches.map((b) => {
         const q = encodeURIComponent(`${txt(b.street)}, ${txt(b.postal)}`);
         return (
-          <div class="relative">
-            <span class="absolute left-4 top-4 z-10 rounded-full bg-ink-900/90 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur-sm">
+          <div class="relative overflow-hidden rounded-2xl ring-1 ring-white/10">
+            <span class="absolute right-4 top-4 z-10 rounded-full bg-ink-900/90 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur-sm">
               {t.contact.branchOffice} {txt(b.city)}
             </span>
             <iframe
               title={`Algreen ${txt(b.city)}`}
               src={`https://www.google.com/maps?q=${q}&output=embed`}
-              class="h-[420px] w-full border-0 grayscale transition-all duration-500 hover:grayscale-0"
+              class="block h-[420px] w-full border-0 grayscale transition-all duration-500 hover:grayscale-0"
               loading="lazy"
               referrerpolicy="no-referrer-when-downgrade"
             />

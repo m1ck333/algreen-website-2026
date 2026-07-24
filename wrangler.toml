@@ -1,0 +1,18 @@
+# Cloudflare Pages config for the Algreen 2026 site.
+# Static output in dist/ + a Pages Function at functions/api/contact.js.
+# worker-mailer sends over a TCP socket → needs nodejs_compat (mirrors the
+# konfigurator worker's settings).
+name = "algreen-site-2026"
+pages_build_output_dir = "dist"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Non-secret env for the contact function. Sends from the upit@algreen.rs mailbox
+# (same as the konfigurator) to info@algreen.rs; reply-to is the customer.
+# SMTP_PASS is a secret → set with:  wrangler pages secret put SMTP_PASS
+[vars]
+SMTP_HOST = "mailcluster.loopia.se"
+SMTP_PORT = "465"
+SMTP_USER = "upit@algreen.rs"
+CONTACT_FROM = "upit@algreen.rs"
+CONTACT_TO = "info@algreen.rs"

@@ -1,0 +1,9 @@
+# Old static-site URLs (from the pre-2026 algreen.rs) → new localized paths.
+# Cloudflare Pages reads this file from the deploy root. Format: from  to  status
+/index.html      /                   301
+/about.html      /o-nama/            301
+/radovi.html     /radovi/            301
+/galerija.html   /radovi/            301
+/oprema.html     /oprema/            301
+/detalji.html    /tehnicki-detalji/  301
+/kontakt.html    /kontakt/           301

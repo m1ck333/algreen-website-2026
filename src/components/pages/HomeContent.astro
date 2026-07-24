@@ -1,301 +1,177 @@
 ---
 import { useTranslations } from '../../i18n/ui';
 import { path } from '../../i18n/routes';
-import { company, stats, type Lang } from '../../i18n/config';
+import { company, type Lang } from '../../i18n/config';
 import CtaBand from '../CtaBand.astro';
-import ProcessSection from '../ProcessSection.astro';
-import FaqSection from '../FaqSection.astro';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+const s = t.home.showcase;
 
-const featureIcons = ['lock', 'gear', 'finger'];
-const systems = t.technical.systems;
-const reviews = ['/img/Recenzija1.png', '/img/Recenzija2.png', '/img/Recenzija3.png', '/img/Recenzija4.png'];
+// Full-bleed hero mosaic (2×2 on mobile, 4-across on desktop).
+const heroImages = [
+  { src: '/img/design/hero-house.webp', alt: 'Algreen — moderna kuća sa aluminijumskim ulaznim vratima' },
+  { src: '/img/design/hero-door.webp', alt: 'Algreen — ekskluzivna ulazna vrata' },
+  { src: '/img/design/hero-pivot.webp', alt: 'Algreen — pivot ulazna vrata' },
+  { src: '/img/design/access-control.webp', alt: 'Algreen — kontrola pristupa' },
+];
+
+// Destinations for the four "exclusive doors" tiles (order matches s.tiles).
+const tileHrefs = [
+  '/files/Katalog ulaznih vrata 2024.pdf',
+  path('equipment', lang),
+  path('equipment', lang),
+  path('technical', lang),
+];
+
+// Works gallery — door photography from the 2026 design set.
+const works = [
+  '/img/design/work-1.webp',
+  '/img/design/hero-door.webp',
+  '/img/design/work-2.webp',
+  '/img/design/work-3.webp',
+  '/img/design/work-4.webp',
+  '/img/design/work-5.webp',
+];
 ---
 
-<!-- HERO -->
-<section class="relative flex min-h-[92vh] items-center overflow-hidden bg-ink-900">
-  <div class="absolute inset-0 overflow-hidden">
-    <picture>
-      <source
-        type="image/avif"
-        srcset="/img/hero-door-new-1280.avif 1280w, /img/hero-door-new.avif 1380w"
-        sizes="100vw"
-      />
-      <img
-        src="/img/hero-door-new.jpg"
-        srcset="/img/hero-door-new-1280.jpg 1280w, /img/hero-door-new.jpg 1380w"
-        sizes="100vw"
-        alt="Algreen aluminijumska ulazna vrata"
-        fetchpriority="high"
-        width="1380"
-        height="591"
-        class="h-full w-full animate-kenburns object-cover object-center"
-      />
-    </picture>
+<!-- HERO — full-bleed photo mosaic with the wordmark -->
+<section class="relative min-h-[92svh] overflow-hidden bg-ink-900">
+  <div class="absolute inset-0 grid grid-cols-2 grid-rows-2 lg:grid-cols-4 lg:grid-rows-1">
+    {
+      heroImages.map((img) => (
+        <img
+          src={img.src}
+          alt={img.alt}
+          width="1400"
+          height="1000"
+          fetchpriority="high"
+          loading="eager"
+          decoding="async"
+          class="h-full w-full object-cover"
+        />
+      ))
+    }
   </div>
-  <div class="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/75 to-ink-900/35"></div>
-  <div class="absolute inset-0 bg-gradient-to-r from-ink-900/80 to-transparent"></div>
+  <div class="absolute inset-0 bg-ink-900/55"></div>
+  <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-900 via-transparent to-ink-900/40"></div>
 
-  <div class="container-px relative pt-28">
-    <div class="max-w-2xl">
-      <p class="eyebrow animate-fade-up text-gold-light" style="animation-delay:.05s">{t.home.heroEyebrow}</p>
-      <h1 class="animate-fade-up font-display text-6xl font-semibold leading-[0.95] text-white sm:text-7xl lg:text-8xl" style="animation-delay:.15s">
-        {t.home.heroTitle}
-      </h1>
-      <p class="mt-6 max-w-xl animate-fade-up text-lg text-white/80" style="animation-delay:.3s">{t.home.heroSubtitle}</p>
-      <div class="mt-10 flex flex-wrap gap-4 animate-fade-up" style="animation-delay:.45s">
-        <a href={company.configurator} class="btn-primary">{t.home.heroCtaPrimary}</a>
-        <a href={path('works', lang)} class="btn-ghost">{t.home.heroCtaSecondary}</a>
-      </div>
-    </div>
+  <div class="relative z-10 flex min-h-[92svh] flex-col items-center justify-center px-5 text-center">
+    <img
+      src="/img/logo-white.png"
+      alt="Algreen"
+      width="360"
+      height="102"
+      class="w-56 animate-fade-up sm:w-72 lg:w-80"
+    />
+    <h1
+      class="mt-7 max-w-md animate-fade-up text-[0.7rem] font-semibold uppercase tracking-[0.32em] text-white/80 sm:text-xs"
+      style="animation-delay:.15s"
+    >
+      {t.home.heroEyebrow} {t.home.heroTitle}
+    </h1>
+    <a href={company.configurator} target="_blank" rel="noopener" class="btn-primary mt-9 animate-fade-up" style="animation-delay:.3s">
+      {s.configCta}
+    </a>
   </div>
 
-  <!-- scroll cue -->
-  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50">
+  <div class="absolute bottom-7 left-1/2 z-10 -translate-x-1/2 text-white/50">
     <svg class="h-7 w-7 animate-scroll-cue" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
   </div>
 </section>
 
-<!-- INTRO -->
-<section class="section bg-cream-50">
-  <div class="container-px grid items-center gap-14 lg:grid-cols-2">
+<!-- CONFIGURATOR — Kreirajte svoja vrata -->
+<section class="bg-ink-900 py-20 text-white sm:py-28">
+  <div class="container-px grid items-center gap-12 lg:grid-cols-2">
     <div class="reveal">
-      <p class="eyebrow">{company.name}</p>
-      <h2 class="font-display text-4xl font-semibold leading-tight text-ink-900 sm:text-5xl">{t.home.introHeading}</h2>
-      <p class="mt-6 leading-relaxed text-ink-700">{t.home.introP1}</p>
-      <p class="mt-4 leading-relaxed text-ink-700">{t.home.introP2}</p>
-      <a href={path('about', lang)} class="btn-outline mt-8">{t.common.learnMore}</a>
+      <p class="eyebrow text-accent">{s.configKicker}</p>
+      <h2 class="text-4xl font-bold uppercase leading-[1.05] tracking-tight sm:text-5xl">{s.configHeading}</h2>
+      <p class="mt-6 max-w-lg leading-relaxed text-white/70">{s.configText}</p>
+      <a href={company.configurator} target="_blank" rel="noopener" class="btn-primary mt-9">{s.configCta}</a>
     </div>
-    <div class="relative reveal" data-delay="2">
-      <!-- gold frame accent -->
-      <div class="absolute -right-4 -top-4 -z-0 hidden h-full w-full rounded-tl-[3rem] rounded-br-[3rem] border border-gold/40 sm:block"></div>
+    <div class="reveal" data-delay="2">
       <img
-        src="/img/hero-door-new-2.jpg"
-        alt={t.home.introHeading}
+        src="/img/design/configurator.webp"
+        alt={s.configHeading}
         loading="lazy"
-        width="900"
-        height="1100"
-        class="relative aspect-[4/5] w-full rounded-tl-[3rem] rounded-br-[3rem] object-cover shadow-luxe"
+        width="1792"
+        height="915"
+        class="w-full rounded shadow-luxe-lg ring-1 ring-white/10"
       />
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
-<section class="section">
-  <div class="container-px">
-    <div class="mx-auto mb-16 max-w-2xl text-center reveal">
-      <p class="eyebrow eyebrow-center">{t.home.featuresHeading}</p>
-      <h2 class="font-display text-4xl font-semibold text-ink-900 sm:text-5xl">{t.home.introHeading}</h2>
-      <div class="divider-gold mt-6"></div>
-    </div>
-    <div class="grid gap-7 md:grid-cols-3">
-      {
-        t.home.features.map((f, i) => (
-          <article class="card-luxe group p-9 reveal" data-delay={String(i + 1)}>
-            <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-ink-900 text-gold transition-all duration-500 group-hover:scale-110 group-hover:bg-gold group-hover:text-ink-900">
-              {featureIcons[i] === 'lock' && (
-                <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 10-8 0v4M5 11h14v9a1 1 0 01-1 1H6a1 1 0 01-1-1v-9z"/></svg>
-              )}
-              {featureIcons[i] === 'gear' && (
-                <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M10.3 3.3a1 1 0 011.4 0l.9.9a8 8 0 011.6.6l1.2-.3a1 1 0 011.1.5l1 1.7a1 1 0 01-.1 1.2l-.8.9a8 8 0 010 1.7l.8.9a1 1 0 01.1 1.2l-1 1.7a1 1 0 01-1.1.5l-1.2-.3a8 8 0 01-1.6.6l-.9.9a1 1 0 01-1.4 0l-.9-.9a8 8 0 01-1.6-.6l-1.2.3a1 1 0 01-1.1-.5l-1-1.7a1 1 0 01.1-1.2l.8-.9a8 8 0 010-1.7l-.8-.9a1 1 0 01-.1-1.2l1-1.7a1 1 0 011.1-.5l1.2.3a8 8 0 011.6-.6l.9-.9z"/><circle cx="12" cy="12" r="2.6"/></svg>
-              )}
-              {featureIcons[i] === 'finger' && (
-                <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 11v3m0-7a4 4 0 014 4v1m-8-1a4 4 0 014-4M5 9a8 8 0 0114 0v5M8 21a12 12 0 01-1-5 5 5 0 0110 0v2m-2 3a16 16 0 01-1-5"/></svg>
-              )}
-            </div>
-            <h3 class="font-display text-2xl font-semibold text-ink-900">{f.title}</h3>
-            <p class="mt-3 text-sm leading-relaxed text-ink-700">{f.text}</p>
-          </article>
-        ))
-      }
-    </div>
+<!-- EXCLUSIVE DOORS — category tiles -->
+<section class="bg-ink-900 pb-2">
+  <div class="container-px pb-12 text-center reveal">
+    <h2 class="text-3xl font-bold uppercase tracking-tight text-white sm:text-4xl">{s.doorsHeading}</h2>
+    <div class="mx-auto mt-6 h-px w-16 bg-accent"></div>
   </div>
-</section>
-
-<ProcessSection lang={lang} />
-
-<!-- CONFIGURATOR -->
-<section class="section relative overflow-hidden bg-cream-50">
-  <div class="container-px grid items-center gap-14 lg:grid-cols-2">
-    <div class="order-2 reveal lg:order-1">
-      <img
-        src="/img/mockup.webp"
-        alt={t.home.configHeading}
-        loading="lazy"
-        width="1000"
-        height="700"
-        class="w-full drop-shadow-2xl"
-      />
-    </div>
-    <div class="order-1 reveal lg:order-2" data-delay="2">
-      <p class="eyebrow">{t.common.configurator}</p>
-      <h2 class="font-display text-4xl font-semibold text-ink-900 sm:text-5xl">{t.home.configHeading}</h2>
-      <p class="mt-6 font-display text-2xl italic text-gold-dark">{t.home.configP1}</p>
-      <p class="mt-4 leading-relaxed text-ink-700">{t.home.configP2}</p>
-      <p class="mt-4 leading-relaxed text-ink-700">{t.home.configP3}</p>
-      <a href={company.configurator} class="btn-dark mt-8">{t.common.configurator}</a>
-    </div>
-  </div>
-</section>
-
-<!-- STATS -->
-<section class="relative overflow-hidden bg-ink-900 py-20">
-  <div class="absolute inset-0 bg-noise opacity-[0.04]"></div>
-  <div class="pointer-events-none absolute -left-20 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-gold/10 blur-3xl"></div>
-  <div class="container-px relative grid grid-cols-2 gap-x-8 gap-y-12 text-center lg:grid-cols-4">
+  <div class="grid grid-cols-2 gap-1 lg:grid-cols-4">
     {
-      stats.map((s, i) => (
-        <div class="reveal" data-delay={String(i + 1)}>
-          <div class="font-display text-5xl font-semibold text-gradient-gold sm:text-6xl">
-            <span data-count={String(s.num)} data-suffix={s.suffix}>0{s.suffix}</span>
-          </div>
-          <div class="mt-3 text-xs uppercase tracking-widest2 text-white/55">
-            {t.statsLabels[s.key as keyof typeof t.statsLabels]}
-          </div>
-        </div>
+      s.tiles.map((tile, i) => (
+        <a
+          href={tileHrefs[i]}
+          target={tileHrefs[i].endsWith('.pdf') ? '_blank' : undefined}
+          rel={tileHrefs[i].endsWith('.pdf') ? 'noopener' : undefined}
+          class="group mosaic-tile aspect-[4/5] reveal"
+          data-delay={String((i % 4) + 1)}
+        >
+          <img src={tile.img} alt={tile.label} loading="lazy" width="700" height="875" />
+          <span class="mosaic-label">{tile.label}</span>
+        </a>
       ))
     }
   </div>
 </section>
 
-<!-- DOOR SYSTEMS — interactive tabs -->
-<section class="section">
-  <div class="container-px">
-    <div class="mx-auto mb-12 max-w-2xl text-center reveal">
-      <p class="eyebrow eyebrow-center">{t.home.systemsHeading}</p>
-      <h2 class="font-display text-4xl font-semibold text-ink-900 sm:text-5xl">{t.home.systemsHeading}</h2>
-      <p class="mt-5 text-ink-700">{t.home.systemsSubheading}</p>
-    </div>
-
-    <!-- tab buttons -->
-    <div class="mb-10 flex flex-wrap justify-center gap-2 reveal" role="tablist" data-systems-tabs>
-      {
-        systems.map((s, i) => (
-          <button
-            type="button"
-            role="tab"
-            data-tab={String(i)}
-            aria-selected={i === 0 ? 'true' : 'false'}
-            class="rounded-full border px-5 py-2.5 text-xs font-semibold uppercase tracking-wider transition-all data-[active=true]:border-ink-900 data-[active=true]:bg-ink-900 data-[active=true]:text-white border-ink-900/15 text-ink-700 hover:border-gold"
-            data-active={i === 0 ? 'true' : 'false'}
-          >
-            {s.name}
-          </button>
-        ))
-      }
-    </div>
-
-    <!-- panels -->
-    <div class="relative">
-      {
-        systems.map((s, i) => (
-          <div
-            data-panel={String(i)}
-            class:list={['grid items-center gap-10 lg:grid-cols-2', i === 0 ? '' : 'hidden']}
-          >
-            <div class="flex justify-center rounded-3xl bg-cream p-10 shadow-sm ring-1 ring-ink-900/5">
-              <img src={s.img} alt={s.name} loading="lazy" class="max-h-[360px] w-auto object-contain" />
-            </div>
-            <div>
-              <span class="font-display text-sm uppercase tracking-widest2 text-gold-dark">{`0${i + 1} / 0${systems.length}`}</span>
-              <h3 class="mt-2 font-display text-4xl font-semibold text-ink-900">{s.name}</h3>
-              <p class="mt-2 text-ink-700">{s.wing}</p>
-              <dl class="mt-6 space-y-3 text-sm">
-                <div class="flex justify-between gap-4 border-b border-ink-900/10 pb-3">
-                  <dt class="text-ink-700">{t.technical.panelLabel}</dt>
-                  <dd class="text-right font-medium text-ink-900">{s.panel}</dd>
-                </div>
-                <div class="flex justify-between gap-4 border-b border-ink-900/10 pb-3">
-                  <dt class="text-ink-700">{t.technical.hinges}</dt>
-                  <dd class="text-right font-medium text-ink-900">{s.hinges}</dd>
-                </div>
-                <div class="flex justify-between gap-4">
-                  <dt class="font-semibold text-gold-dark">{t.technical.udValue}</dt>
-                  <dd class="text-right text-lg font-bold text-gold-dark">{s.ud}</dd>
-                </div>
-              </dl>
-              <a href={path('technical', lang)} class="btn-outline mt-8">{t.common.learnMore}</a>
-            </div>
-          </div>
-        ))
-      }
-    </div>
+<!-- OFFER — Naša ponuda manifesto -->
+<section class="bg-ink-900 py-24 sm:py-32">
+  <div class="container-px mx-auto max-w-3xl text-center reveal">
+    <p class="eyebrow eyebrow-center text-accent">{s.offerKicker}</p>
+    <p class="text-2xl font-medium leading-snug text-white sm:text-3xl">{s.offerText}</p>
+    <p class="mt-8 text-sm font-semibold uppercase tracking-[0.28em] text-accent">{s.offerSoon}</p>
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
-<section class="section bg-cream-50">
-  <div class="container-px">
-    <div class="mx-auto mb-14 max-w-2xl text-center reveal">
-      <p class="eyebrow eyebrow-center">★★★★★</p>
-      <h2 class="font-display text-4xl font-semibold text-ink-900 sm:text-5xl">{t.home.testimonialsHeading}</h2>
-      <p class="mt-4 text-ink-700">{t.home.testimonialsSubheading}</p>
-    </div>
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {
-        reviews.map((r, i) => (
-          <figure class="overflow-hidden rounded-2xl bg-white p-3 shadow-sm ring-1 ring-ink-900/5 transition-all duration-500 hover:-translate-y-1.5 hover:shadow-luxe reveal" data-delay={String(i + 1)}>
-            <img src={r} alt="Algreen — recenzija kupca" loading="lazy" class="w-full rounded-xl object-cover" />
-          </figure>
-        ))
-      }
-    </div>
-    <div class="mt-12 flex flex-wrap items-center justify-center gap-4 text-center reveal">
-      <a href={company.socials.instagram} target="_blank" rel="noopener" class="btn-outline">Instagram</a>
-      <a href={company.socials.facebook} target="_blank" rel="noopener" class="btn-outline">Facebook</a>
-    </div>
+<!-- PRODUCT MOSAIC — full range -->
+<section class="bg-ink-900">
+  <div class="grid grid-cols-2 gap-1 lg:grid-cols-3">
+    {
+      s.products.map((p, i) => (
+        <figure class="group mosaic-tile aspect-[4/5] reveal" data-delay={String((i % 3) + 1)}>
+          <img src={p.img} alt={p.label} loading="lazy" width="700" height="875" />
+          <figcaption class="mosaic-label">{p.label}</figcaption>
+        </figure>
+      ))
+    }
   </div>
 </section>
 
-<!-- CATALOGS -->
-<section class="section">
-  <div class="container-px">
-    <div class="mx-auto mb-14 max-w-2xl text-center reveal">
-      <p class="eyebrow eyebrow-center">PDF</p>
-      <h2 class="font-display text-4xl font-semibold text-ink-900 sm:text-5xl">{t.home.catalogHeading}</h2>
-      <p class="mt-4 text-ink-700">{t.home.catalogSubheading}</p>
-    </div>
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {
-        t.home.catalogs.map((c, i) => (
-          <a href={c.file} target="_blank" rel="noopener" class="card-luxe group flex flex-col reveal" data-delay={String(i + 1)}>
-            <div class="aspect-[3/4] overflow-hidden bg-cream-50">
-              <img src={c.img} alt={c.title} loading="lazy" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-            </div>
-            <div class="flex items-center justify-between gap-2 border-t border-ink-900/5 p-4">
-              <span class="text-sm font-medium text-ink-900">{c.title}</span>
-              <svg class="h-5 w-5 shrink-0 text-gold-dark transition-transform group-hover:translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
-            </div>
-          </a>
-        ))
-      }
-    </div>
+<!-- WORKS — Naši radovi -->
+<section class="bg-ink-900 py-20 sm:py-28">
+  <div class="container-px mb-12 text-center reveal">
+    <h2 class="text-3xl font-bold uppercase tracking-tight text-white sm:text-4xl">{s.worksHeading}</h2>
+    <div class="mx-auto mt-6 h-px w-16 bg-accent"></div>
+  </div>
+  <div class="grid grid-cols-2 gap-1 lg:grid-cols-3">
+    {
+      works.map((src, i) => (
+        <figure class="group mosaic-tile aspect-[3/4] reveal" data-delay={String((i % 3) + 1)}>
+          <img src={src} alt="Algreen — realizovani projekat" loading="lazy" width="700" height="933" />
+        </figure>
+      ))
+    }
+  </div>
+  <div class="container-px mt-12 text-center reveal">
+    <a href={path('works', lang)} class="btn-outline border-white/25 text-white hover:border-accent hover:text-accent">
+      {s.worksCta}
+    </a>
   </div>
 </section>
-
-<FaqSection lang={lang} />
 
 <CtaBand lang={lang} variant="configurator" />
-
-<script>
-  // Door-system tabs
-  const tabs = document.querySelectorAll<HTMLButtonElement>('[data-tab]');
-  const panels = document.querySelectorAll<HTMLElement>('[data-panel]');
-  tabs.forEach((tab) => {
-    tab.addEventListener('click', () => {
-      const idx = tab.dataset.tab;
-      tabs.forEach((t) => {
-        const active = t === tab;
-        t.dataset.active = String(active);
-        t.setAttribute('aria-selected', String(active));
-      });
-      panels.forEach((p) => p.classList.toggle('hidden', p.dataset.panel !== idx));
-    });
-  });
-</script>

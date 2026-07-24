@@ -20,17 +20,17 @@ const t = useTranslations(lang);
     class="absolute inset-0 h-full w-full object-cover opacity-20"
   />
   <div class="absolute inset-0 bg-gradient-to-r from-ink-900 via-ink-900/90 to-ink-900/60"></div>
-  <div class="pointer-events-none absolute right-0 top-0 h-full w-1/2 bg-gold/5 blur-3xl"></div>
+  <div class="pointer-events-none absolute right-0 top-0 h-full w-1/2 bg-accent/5 blur-3xl"></div>
   <div class="container-px relative flex flex-col items-start gap-6 py-20 sm:py-24 md:flex-row md:items-center md:justify-between">
     <div class="max-w-2xl reveal">
-      <div class="mb-5 h-px w-16 bg-gold"></div>
+      <div class="mb-5 h-px w-16 bg-accent"></div>
       <h2 class="font-display text-4xl font-semibold text-white sm:text-5xl">{t.home.ctaHeading}</h2>
       <p class="mt-4 text-white/70">{t.home.ctaText}</p>
     </div>
     <div class="flex flex-wrap gap-3 reveal">
       {
         variant === 'configurator' ? (
-          <a href={company.configurator} class="btn-primary">{t.common.configurator}</a>
+          <a href={company.configurator} target="_blank" rel="noopener" class="btn-primary">{t.common.configurator}</a>
         ) : (
           <a href={path('contact', lang)} class="btn-primary">{t.common.contactUs}</a>
         )

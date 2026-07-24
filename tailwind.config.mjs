@@ -23,10 +23,11 @@ export default {
           800: '#2e3e27',
           900: '#283523',
         },
-        gold: {
-          DEFAULT: '#c2a24c',
-          light: '#e3cf94',
-          dark: '#9a7c33',
+        // Primary CTA / signal colour — matches the 2026 mockup's red
+        accent: {
+          DEFAULT: '#e01f26',
+          light: '#f0353c',
+          dark: '#b8161c',
         },
         // warm luxe neutrals for a more premium feel than flat white
         cream: {
@@ -37,8 +38,10 @@ export default {
         },
       },
       fontFamily: {
+        // 2026 redesign: all-sans, editorial. `display` kept as a key so the
+        // dozens of `font-display` headings switch to sans in one place.
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['"Cormorant Garamond"', '"Playfair Display"', 'Georgia', 'serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {
         widest2: '0.28em',
@@ -47,8 +50,6 @@ export default {
         content: '1240px',
       },
       backgroundImage: {
-        'gold-line': 'linear-gradient(90deg, transparent, #c2a24c, transparent)',
-        'gold-text': 'linear-gradient(100deg, #9a7c33, #e3cf94 45%, #9a7c33)',
         'noise':
           "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")",
       },

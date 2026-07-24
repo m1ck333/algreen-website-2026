@@ -17,9 +17,9 @@ const { title, subtitle, image = '/img/header.jpg', eyebrow, kicker } = Astro.pr
   <div class="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/70 to-ink-900/40"></div>
   <div class="absolute inset-0 bg-noise opacity-[0.04]"></div>
   <div class="container-px relative pb-16 pt-32">
-    {eyebrow && <p class="eyebrow animate-fade-up text-gold-light">{eyebrow}</p>}
+    {eyebrow && <p class="eyebrow animate-fade-up text-accent-light">{eyebrow}</p>}
     <h1 class="max-w-3xl animate-fade-up font-display text-5xl font-semibold text-white sm:text-6xl lg:text-7xl" style="animation-delay:.1s">{title}</h1>
     {subtitle && <p class="mt-5 max-w-2xl animate-fade-up text-lg text-white/75" style="animation-delay:.2s">{subtitle}</p>}
-    {kicker && <p class="mt-5 animate-fade-up text-sm font-semibold uppercase tracking-[0.28em] text-gold-light" style="animation-delay:.2s">{kicker}</p>}
+    {kicker && <p class="mt-5 animate-fade-up text-sm font-semibold uppercase tracking-[0.28em] text-accent-light" style="animation-delay:.2s">{kicker}</p>}
   </div>
 </section>

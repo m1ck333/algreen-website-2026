@@ -33,7 +33,7 @@ const logoHref = routes.home[lang];
     <!-- Logo (always the white wordmark — bar is always dark glass) -->
     <a href={logoHref} class="relative z-10 flex items-center" aria-label="Algreen">
       <img
-        src="/img/newlogobeli.png"
+        src="/img/logo-white.png"
         alt="Algreen"
         width="140"
         height="40"
@@ -48,8 +48,8 @@ const logoHref = routes.home[lang];
           <a
             href={routes[item.key][lang]}
             class:list={[
-              'relative text-xs font-medium uppercase tracking-wider transition-colors hover:text-gold after:absolute after:-bottom-1.5 after:left-0 after:h-px after:bg-gold after:transition-all after:duration-300',
-              routeKey === item.key ? 'text-gold after:w-full' : 'text-white/90 after:w-0 hover:after:w-full',
+              'relative text-xs font-medium uppercase tracking-wider transition-colors hover:text-accent-light after:absolute after:-bottom-1.5 after:left-0 after:h-px after:bg-accent after:transition-all after:duration-300',
+              routeKey === item.key ? 'text-accent-light after:w-full' : 'text-white/90 after:w-0 hover:after:w-full',
             ]}
             data-nav-link
             aria-current={routeKey === item.key ? 'page' : undefined}
@@ -60,7 +60,9 @@ const logoHref = routes.home[lang];
       }
       <a
         href={company.configurator}
-        class="text-sm font-semibold uppercase tracking-wide text-gold transition-colors hover:text-gold-light"
+        target="_blank"
+        rel="noopener"
+        class="rounded bg-accent px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-accent-light"
       >
         {t.nav.configurator}
       </a>
@@ -97,42 +99,57 @@ const logoHref = routes.home[lang];
     </div>
   </div>
 
-  <!-- Mobile menu panel -->
-  <div
-    id="mobile-menu"
-    class="invisible fixed inset-0 z-50 flex translate-x-full flex-col bg-ink-900 px-6 pb-10 pt-24 text-white transition-transform duration-300 ease-in-out lg:hidden"
-    data-mobile-menu
-  >
-    <nav class="flex flex-col gap-1" aria-label="Mobilni meni">
-      {
-        navItems.map((item) => (
-          <a
-            href={routes[item.key][lang]}
-            class:list={[
-              'border-b border-white/10 py-4 text-lg font-medium uppercase tracking-wide',
-              routeKey === item.key ? 'text-gold' : 'text-white',
-            ]}
-          >
-            {item.label}
-          </a>
-        ))
-      }
-      <a
-        href={company.configurator}
-        class="border-b border-white/10 py-4 text-lg font-semibold uppercase tracking-wide text-gold"
-      >
-        {t.nav.configurator}
-      </a>
-    </nav>
-    <a
-      href={otherLangHref}
-      class="mt-8 inline-flex w-fit rounded-full border border-white/40 px-5 py-2 text-sm font-semibold uppercase tracking-wider"
-      hreflang={otherLang}
-    >
-      {otherLang === 'sr' ? 'Srpski' : 'English'} ({otherLang.toUpperCase()})
-    </a>
-  </div>
 </header>
+
+<!-- Mobile menu panel — kept OUTSIDE <header> so its `position: fixed` is
+     relative to the viewport, not the backdrop-filtered header (which would
+     otherwise become the containing block and shrink the panel to the bar). -->
+<div
+  id="mobile-menu"
+  class="invisible fixed inset-0 z-[80] flex translate-x-full flex-col bg-[#161313] px-6 pb-10 pt-24 text-white transition-transform duration-300 ease-in-out lg:hidden"
+  data-mobile-menu
+>
+  <button
+    type="button"
+    class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-md text-white"
+    aria-label={t.common.menu}
+    data-menu-close
+  >
+    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+  <nav class="flex flex-col gap-1" aria-label="Mobilni meni">
+    {
+      navItems.map((item) => (
+        <a
+          href={routes[item.key][lang]}
+          class:list={[
+            'border-b border-white/10 py-4 text-lg font-medium uppercase tracking-wide',
+            routeKey === item.key ? 'text-accent-light' : 'text-white',
+          ]}
+        >
+          {item.label}
+        </a>
+      ))
+    }
+    <a
+      href={company.configurator}
+      target="_blank"
+      rel="noopener"
+      class="mt-4 inline-flex w-fit rounded bg-accent px-6 py-3 text-base font-semibold uppercase tracking-wide text-white"
+    >
+      {t.nav.configurator}
+    </a>
+  </nav>
+  <a
+    href={otherLangHref}
+    class="mt-8 inline-flex w-fit rounded-full border border-white/40 px-5 py-2 text-sm font-semibold uppercase tracking-wider"
+    hreflang={otherLang}
+  >
+    {otherLang === 'sr' ? 'Srpski' : 'English'} ({otherLang.toUpperCase()})
+  </a>
+</div>
 
 <script>
   const header = document.querySelector('[data-header]') as HTMLElement | null;
@@ -155,6 +172,7 @@ const logoHref = routes.home[lang];
   }
 
   toggle?.addEventListener('click', () => setMenu(!menuOpen));
+  document.querySelector('[data-menu-close]')?.addEventListener('click', () => setMenu(false));
 
   // Persistent dark frosted-glass bar (white text always). Just deepens the
   // tint + adds a shadow once you scroll past the top — no color/logo flip.
