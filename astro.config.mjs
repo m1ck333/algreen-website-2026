@@ -1,8 +1,9 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 
-// Update this to the final production domain before deploy.
-const SITE = 'https://algreen.rs';
+// Final production domain. apex algreen.rs 301-redirects to www at Loopia,
+// so www is the canonical host that actually serves the site.
+const SITE = 'https://www.algreen.rs';
 
 export default defineConfig({
   site: SITE,
