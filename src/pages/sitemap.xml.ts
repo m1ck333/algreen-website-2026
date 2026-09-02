@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { routes, type RouteKey } from '../i18n/routes';
 
-const SITE = 'https://www.algreen.rs';
+const SITE = 'https://algreen.rs';
 
 export const GET: APIRoute = () => {
   const keys = Object.keys(routes) as RouteKey[];

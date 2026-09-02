@@ -1,0 +1,19 @@
+# Algreen 2026 — served as a static site from Loopia (Apache/PHP).
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Contact form: the site POSTs to /api/contact — run the PHP handler for it.
+  RewriteRule ^api/contact/?$ /api/contact.php [L]
+</IfModule>
+
+# Old (pre-2026) static URLs -> new localized paths
+Redirect 301 /index.html   /
+Redirect 301 /about.html   /o-nama/
+Redirect 301 /radovi.html  /radovi/
+Redirect 301 /galerija.html /radovi/
+Redirect 301 /oprema.html  /oprema/
+Redirect 301 /detalji.html /tehnicki-detalji/
+Redirect 301 /kontakt.html /kontakt/
