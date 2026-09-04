@@ -3,6 +3,7 @@ import { useTranslations } from '../../i18n/ui';
 import { path } from '../../i18n/routes';
 import { company, type Lang } from '../../i18n/config';
 import CtaBand from '../CtaBand.astro';
+import FaqSection from '../FaqSection.astro';
 
 interface Props {
   lang: Lang;
@@ -173,5 +174,7 @@ const works = [
     </a>
   </div>
 </section>
+
+<FaqSection lang={lang} />
 
 <CtaBand lang={lang} variant="configurator" />

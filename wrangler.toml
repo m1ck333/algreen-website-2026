@@ -7,6 +7,11 @@ pages_build_output_dir = "dist"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Persisted, queryable logs for the contact Function (see send errors in
+# dashboard → Compute → Observability, and via the GraphQL API).
+[observability]
+enabled = true
+
 # Non-secret env for the contact function. Sends from the upit@algreen.rs mailbox
 # (same as the konfigurator) to info@algreen.rs; reply-to is the customer.
 # SMTP_PASS is a secret → set with:  wrangler pages secret put SMTP_PASS
