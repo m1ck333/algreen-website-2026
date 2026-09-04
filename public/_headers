@@ -1,0 +1,8 @@
+# Security headers for the Cloudflare Pages site (apex + www only).
+# Conservative set — no CSP (would block GTM / the CF analytics beacon / fonts),
+# and no HSTS includeSubDomains (must not force HTTPS on other subdomains).
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000
