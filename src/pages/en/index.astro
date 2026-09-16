@@ -5,12 +5,7 @@ import { useTranslations } from '../../i18n/ui';
 const lang = 'en' as const;
 const t = useTranslations(lang);
 
-const heroPreload = [
-  '/img/design/hero-house.webp',
-  '/img/design/hero-door.webp',
-  '/img/design/hero-pivot.webp',
-  '/img/design/access-control.webp',
-];
+const heroPreload = ['/img/design/hero-house.webp'];
 ---
 
 <BaseLayout lang={lang} routeKey="home" title={t.home.metaTitle} description={t.home.metaDescription} preloadImages={heroPreload}>

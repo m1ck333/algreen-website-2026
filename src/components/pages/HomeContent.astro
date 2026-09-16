@@ -43,13 +43,13 @@ const works = [
 <section class="relative min-h-[92svh] overflow-hidden bg-ink-900">
   <div class="absolute inset-0 grid grid-cols-2 grid-rows-2 lg:grid-cols-4 lg:grid-rows-1">
     {
-      heroImages.map((img) => (
+      heroImages.map((img, i) => (
         <img
           src={img.src}
           alt={img.alt}
-          width="1400"
-          height="1000"
-          fetchpriority="high"
+          width="1000"
+          height="714"
+          fetchpriority={i === 0 ? 'high' : 'auto'}
           loading="eager"
           decoding="async"
           class="h-full w-full object-cover"
@@ -122,7 +122,7 @@ const works = [
           class="group mosaic-tile aspect-[4/5] reveal"
           data-delay={String((i % 4) + 1)}
         >
-          <img src={tile.img} alt={tile.label} loading="lazy" width="700" height="875" />
+          <img src={tile.img} alt="" loading="lazy" width="700" height="875" />
           <span class="mosaic-label">{tile.label}</span>
         </a>
       ))
@@ -145,7 +145,7 @@ const works = [
     {
       s.products.map((p, i) => (
         <figure class="group mosaic-tile aspect-[4/5] reveal" data-delay={String((i % 3) + 1)}>
-          <img src={p.img} alt={p.label} loading="lazy" width="700" height="875" />
+          <img src={p.img} alt="" loading="lazy" width="700" height="875" />
           <figcaption class="mosaic-label">{p.label}</figcaption>
         </figure>
       ))
