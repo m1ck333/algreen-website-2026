@@ -5,7 +5,11 @@ import { useTranslations } from '../../i18n/ui';
 const lang = 'en' as const;
 const t = useTranslations(lang);
 
-const heroPreload = ['/img/design/hero-house.webp'];
+const heroPreload = [{
+  href: '/img/design/hero-house.webp',
+  imagesrcset: '/img/design/hero-house-500.webp 500w, /img/design/hero-house.webp 1000w',
+  imagesizes: '(min-width: 1024px) 25vw, 50vw',
+}];
 ---
 
 <BaseLayout lang={lang} routeKey="home" title={t.home.metaTitle} description={t.home.metaDescription} preloadImages={heroPreload}>

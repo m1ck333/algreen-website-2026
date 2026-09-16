@@ -12,6 +12,10 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const s = t.home.showcase;
 
+// Responsive images: pair a 500px mobile variant with the 1000px base so mobile
+// downloads ~18KB instead of ~47KB per image. All design images have a -500.webp.
+const srcset = (src: string) => `${src.replace(/\.webp$/, '-500.webp')} 500w, ${src} 1000w`;
+
 // Full-bleed hero mosaic (2×2 on mobile, 4-across on desktop).
 const heroImages = [
   { src: '/img/design/hero-house.webp', alt: 'Algreen — moderna kuća sa aluminijumskim ulaznim vratima' },
@@ -46,6 +50,8 @@ const works = [
       heroImages.map((img, i) => (
         <img
           src={img.src}
+          srcset={srcset(img.src)}
+          sizes="(min-width: 1024px) 25vw, 50vw"
           alt={img.alt}
           width="1000"
           height="714"
@@ -96,10 +102,12 @@ const works = [
     <div class="reveal" data-delay="2">
       <img
         src="/img/design/configurator.webp"
+        srcset={srcset('/img/design/configurator.webp')}
+        sizes="(min-width: 1024px) 45vw, 100vw"
         alt={s.configHeading}
         loading="lazy"
-        width="1792"
-        height="915"
+        width="1000"
+        height="511"
         class="w-full rounded shadow-luxe-lg ring-1 ring-white/10"
       />
     </div>
@@ -122,7 +130,7 @@ const works = [
           class="group mosaic-tile aspect-[4/5] reveal"
           data-delay={String((i % 4) + 1)}
         >
-          <img src={tile.img} alt="" loading="lazy" width="700" height="875" />
+          <img src={tile.img} srcset={srcset(tile.img)} sizes="(min-width: 1024px) 25vw, 50vw" alt="" loading="lazy" width="700" height="875" />
           <span class="mosaic-label">{tile.label}</span>
         </a>
       ))
@@ -145,7 +153,7 @@ const works = [
     {
       s.products.map((p, i) => (
         <figure class="group mosaic-tile aspect-[4/5] reveal" data-delay={String((i % 3) + 1)}>
-          <img src={p.img} alt="" loading="lazy" width="700" height="875" />
+          <img src={p.img} srcset={srcset(p.img)} sizes="(min-width: 1024px) 33vw, 50vw" alt="" loading="lazy" width="700" height="875" />
           <figcaption class="mosaic-label">{p.label}</figcaption>
         </figure>
       ))
@@ -163,7 +171,7 @@ const works = [
     {
       works.map((src, i) => (
         <figure class="group mosaic-tile aspect-[3/4] reveal" data-delay={String((i % 3) + 1)}>
-          <img src={src} alt="Algreen — realizovani projekat" loading="lazy" width="700" height="933" />
+          <img src={src} srcset={srcset(src)} sizes="(min-width: 1024px) 33vw, 50vw" alt="Algreen — realizovani projekat" loading="lazy" width="700" height="933" />
         </figure>
       ))
     }

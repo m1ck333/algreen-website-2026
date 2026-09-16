@@ -17,8 +17,8 @@ interface Props {
   ogImage?: string;
   /** Extra JSON-LD object(s) to embed (e.g. ItemList of products). */
   extraSchema?: object | object[];
-  /** Above-the-fold images to <link rel="preload"> (e.g. the home hero mosaic). */
-  preloadImages?: string[];
+  /** Above-the-fold image(s) to <link rel="preload"> (e.g. the home hero LCP image). */
+  preloadImages?: { href: string; imagesrcset?: string; imagesizes?: string }[];
 }
 
 const { lang, routeKey, title, description, ogImage = '/img/og-default.jpg', extraSchema, preloadImages = [] } = Astro.props;
@@ -160,7 +160,9 @@ const allSchemas = [jsonLd, ...(breadcrumb ? [breadcrumb] : []), ...extraSchemas
     <meta name="twitter:image" content={ogImageUrl} />
 
     <!-- Above-the-fold image preloads (e.g. home hero mosaic) -->
-    {preloadImages.map((src) => <link rel="preload" as="image" href={src} fetchpriority="high" />)}
+    {preloadImages.map((img) => (
+      <link rel="preload" as="image" href={img.href} imagesrcset={img.imagesrcset} imagesizes={img.imagesizes} fetchpriority="high" />
+    ))}
 
     <!-- Fonts — loaded non-render-blocking (media=print swap trick); only the
          weights actually used (400/500/600/700). -->
