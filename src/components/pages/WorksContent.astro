@@ -13,6 +13,10 @@ const t = useTranslations(lang);
 // Door project photos (legacy webp set — optimized variants).
 const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 23, 25, 27, 28, 29, 30, 31];
 const gallery = ids.map((n) => `/img/${n}.webp`);
+
+// Grid thumbnails use a 600px variant (each img has a -600.webp); the full
+// image is kept for the lightbox. Mobile downloads ~33KB instead of ~134KB each.
+const thumbSrcset = (src: string) => `${src.replace(/\.webp$/, '-600.webp')} 600w, ${src} 1400w`;
 ---
 
 <PageHero title={t.works.title} subtitle={t.works.subtitle} eyebrow={t.nav.works} image="/img/19.webp" />
@@ -33,8 +37,11 @@ const gallery = ids.map((n) => `/img/${n}.webp`);
           >
             <img
               src={src}
+              srcset={thumbSrcset(src)}
+              sizes="(min-width: 1024px) 300px, (min-width: 640px) 33vw, 50vw"
               alt={`${t.works.title} ${i + 1} — Algreen`}
               loading="lazy"
+              decoding="async"
               class="w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           </button>

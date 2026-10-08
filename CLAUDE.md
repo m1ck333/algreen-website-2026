@@ -7,9 +7,12 @@ Context for any future Claude Code session opened from this directory. Read this
 A modern, responsive, bilingual (SR default / EN) **marketing site for Algreen** — a
 company making exclusive aluminium entrance doors, with branches in **Niš** and **Belgrade**.
 
-This project is a **ground-up rebuild** that replaces the old static HTML site. The old
-site still lives at `../algreen.rs site/algreen.rs` and is the source of all original
-copy, images and catalog PDFs (already carried over here — no need to copy again).
+This project is a **ground-up rebuild** that replaces the old static HTML site (now live at
+algreen.rs). The old site still lives at `../algreen-site-old/algreen.rs` and is the source of
+all original copy, images and catalog PDFs (already carried over here — no need to copy again).
+
+The look is the **2026 redesign**: a dark, all-sans, red-accent photo-mosaic (built from a
+client PDF; imagery in `public/img/design/`) — not the old green/gold/serif theme.
 
 The door **configurator** is a separate external app: `https://konfigurator.algreen.rs`
 (not part of this repo — we only link to it).
@@ -40,42 +43,42 @@ node scripts/optimize-images.mjs   # downsize+recompress large images in public/
 
 ## Deployment
 
-Live demo: **https://algreen-site-2026.vercel.app** (Vercel project
-`milosmickemitrovics-projects/algreen-site-2026`).
+**Live in production at https://algreen.rs** — hosted on **Cloudflare Pages** (project
+`algreen-site-2026`, also reachable at https://algreen-site-2026.pages.dev).
 
-GitHub auto-deploy is **not** connected — the Vercel account (`milos-micke-mitrovic`) and the
-GitHub repo owner (`m1ck333`) differ, which makes the Vercel GitHub App awkward. So we deploy
-**manually from the CLI**:
+**`git push` to `main` auto-deploys** via GitHub Actions (`.github/workflows/deploy.yml`:
+Node 22 → `npm ci` → `npm run build` → `wrangler pages deploy`). Manual fallback:
 
 ```bash
-npx vercel@latest --prod --yes --archive=tgz
+npm run build
+CLOUDFLARE_API_TOKEN="$(cat ~/.jamogu-cf-token)" \
+  npx wrangler pages deploy dist --project-name algreen-site-2026 --branch main --commit-dirty=true
 ```
 
-Notes:
-- `--archive=tgz` is **required** on this network — the default multi-connection upload aborts;
-  the single-archive upload works. Also needs a recent CLI (hence `vercel@latest`).
-- It builds on Vercel's servers, so a local `npm run build` first isn't necessary.
-- To wire up auto-deploy-on-push later, connect the repo in the Vercel project's Git settings
-  (requires authorizing the Vercel GitHub App on the `m1ck333` account).
+- **Contact form** = a Cloudflare **Pages Function** (`functions/api/contact.js`, `worker-mailer`
+  over Loopia SMTP, from `upit@` → `info@algreen.rs`). `wrangler.toml` holds the non-secret SMTP
+  vars + `[observability]`; `SMTP_PASS` is a Pages secret. (`public/.htaccess` + `api/contact.php`
+  are a dormant Loopia/Apache fallback.)
+- Vercel was fully removed (2026-07). Don't use the old `vercel … --archive=tgz` command.
 
-## Going live on algreen.rs (the real domain)
+## Domain / DNS / email  ⚠️ careful here
 
-The site is built for the root domain `algreen.rs` (already set as `SITE`). To switch the live
-domain from `*.vercel.app` to `algreen.rs` (this **replaces the old static site**):
-1. Vercel → project → Settings → Domains → add `algreen.rs` and `www.algreen.rs`.
-2. At **Loopia DNS**, point web records to Vercel (Vercel shows exact values), typically:
-   - `A` `@` → `76.76.21.21`
-   - `CNAME` `www` → `cname.vercel-dns.com`
-3. **CRITICAL — do NOT touch the `MX` records** (and any mail `TXT`/SPF/DKIM). Email
-   (`info@algreen.rs` on Loopia / `mailcluster.loopia.se`) must keep working. Only change the
-   web A/CNAME. Also leave `konfigurator.algreen.rs` DNS intact.
+algreen.rs **DNS is on Cloudflare** (nameservers moved from Loopia 2026-09; registration stays at
+Loopia). apex + `www` are **proxied** CNAMEs → the Pages project (apex works via CF **CNAME
+flattening**). **Everything else is replicated in CF as DNS-only (grey) and must stay that way:**
+- **Email** — MX (`mailcluster`/`mail2.loopia.se`), SPF, DMARC (`_dmarc` = `v=DMARC1; p=none`).
+  **NEVER touch MX / proxy mail records.** Mailboxes live on Loopia.
+- Subdomains — `internal` (⚠️ **business-critical app, must not go down**), `konfigurator`
+  (CF Pages, proxied), `konfigurator-api`, `store`, `tracker-*`, `autoconfig`.
+- Editing DNS needs a **Zone:DNS-scoped** token — `~/.jamogu-cf-token` is Workers/Pages-only and
+  **cannot** touch DNS. CF account: `m1ck33kc1m@gmail.com` (`2fb3d178d5f36a51bbee103ec69d3ef7`).
 
 ## Analytics
 
-GTM container **`GTM-N9D9PRC`** (in `src/i18n/config.ts`, carried from the old site) is loaded
-with **Google Consent Mode** defaulting to *denied*; the cookie banner (`ConsentBanner.astro`)
-flips it to *granted* on accept (stored in `localStorage` `algreen-consent`). Verify the GTM
-container still exists in the client's Google account and that its GA4/Ads tags are configured.
+Two systems: **Cloudflare Web Analytics** (cookieless, primary — queryable via GraphQL for
+proactive monitoring) and **GTM `GTM-N9D9PRC`** (in `config.ts`, for GA4/Ads). GTM loads via
+**Google Consent Mode** (default denied; `ConsentBanner.astro` flips to granted on accept) and
+is **deferred to first user interaction** (in `BaseLayout`) to keep it off the critical path.
 
 ## Architecture & conventions
 
@@ -103,12 +106,15 @@ container still exists in the client's Google account and that its GA4/Ads tags 
 - `Footer.astro`, `PageHero.astro` (inner-page header), `CtaBand.astro` (reused CTA).
 - `src/pages/sitemap.xml.ts` — generates `/sitemap.xml` from `routes` with hreflang alternates.
 
-### Styling
-- Design tokens in `tailwind.config.mjs`: `ink` (charcoal), `brand` (green), `gold` (accent),
-  `font-display` (Playfair) for headings, `font-sans` (Inter) for body.
-- Reusable component classes in `src/styles/global.css`: `.btn-primary/.btn-ghost/.btn-dark/.btn-outline`,
-  `.section`, `.container-px`, `.eyebrow`, `.reveal` (scroll-in animation).
-- **Mobile-first**: always design for small screens, add `sm:`/`lg:` for larger.
+### Styling (2026 dark redesign)
+- Design tokens in `tailwind.config.mjs`: `ink` (near-black) + **`accent` (red `#e01f26`)**.
+  **All-sans** — `font-display` now maps to **Inter** (the old serif), and the old `brand`/green
+  and `gold` tokens were **removed**. Body is `bg-ink-900 text-white/80` (dark theme sitewide).
+- Reusable classes in `src/styles/global.css`: `.btn-primary/.btn-ghost/.btn-dark/.btn-outline`,
+  `.section`, `.container-px`, `.eyebrow`, `.reveal`, and `.mosaic-tile`/`.mosaic-label` (the
+  full-bleed photo tiles). `ProcessSection`/`FaqSection` note: FAQ is used again on the homepage.
+- **Mobile-first** (≈60% of real traffic is mobile). Homepage images + `/radovi/` gallery use
+  responsive `srcset` (design images have a `-500.webp`; gallery photos a `-600.webp`).
 
 ### Assets
 - Images in `public/img/`, PDFs in `public/files/`. Referenced by absolute path (`/img/...`).
@@ -124,14 +130,17 @@ container still exists in the client's Google account and that its GA4/Ads tags 
 4. Create `src/pages/<sr-path>.astro` and `src/pages/en/<en-path>.astro` (thin wrappers).
 5. Add it to `navItems` in `Header.astro` (and Footer if desired).
 
-## Known follow-ups / TODO before production
-- **Contact form** uses a `mailto:` fallback — wire to a real service (Formspree, Web3Forms,
-  or a backend endpoint) for actual submissions. See `ContactContent.astro`.
-- Confirm the production domain `SITE` in **`astro.config.mjs`** and **`src/pages/sitemap.xml.ts`**
-  (currently `https://algreen.rs`).
-- The old site had **Google Tag Manager / Google Ads** (GTM-N9D9PRC, AW-790944121) — re-add to
-  `BaseLayout.astro` if analytics are wanted.
-- Consider a `site.webmanifest` (android-chrome icons already exist in `public/img/`).
+## Status (what's already done)
+- **In production** on algreen.rs (Cloudflare). SITE = `https://algreen.rs` in both
+  `astro.config.mjs` and `src/pages/sitemap.xml.ts`.
+- **Contact form works** (CF Pages Function → `info@algreen.rs`) — the old `mailto:` TODO is done.
+- **SEO**: canonical/hreflang/sitemap, homepage **FAQ with FAQPage JSON-LD**, verified in Google
+  Search Console + sitemap submitted. Lighthouse mobile ≈ **76 / A11y 100 / BP 100 / SEO 100**.
+  Already optimized: responsive images, non-blocking fonts, deferred GTM, security headers
+  (`public/_headers`).
+- **GTM** is wired (deferred — see Analytics). `site.webmanifest` exists.
+- Standing OK to proactively monitor/optimize (analytics, perf, SEO) — see project memory
+  (`Monitoring mandate`). Deploy improvements straight via `git push`.
 
 ## Gotchas
 - `@astrojs/sitemap` was removed — its i18n mode crashed with this Astro version. We generate
