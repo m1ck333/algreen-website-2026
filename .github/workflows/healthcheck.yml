@@ -1,0 +1,50 @@
+name: Health check
+
+# Daily uptime/email/SSL check. If anything fails, the workflow fails and GitHub
+# notifies the repo owner (enable "Actions" email notifications to receive these).
+# Run manually any time from the Actions tab ("Run workflow").
+on:
+  schedule:
+    - cron: '0 7 * * *' # 07:00 UTC daily
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Site + apps reachable
+        run: |
+          fail=0
+          check() {
+            code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 25 "$1")
+            if echo " $2 " | grep -q " $code "; then
+              echo "OK   $1 -> $code"
+            else
+              echo "::error title=Down::$1 returned $code (expected $2)"; fail=1
+            fi
+          }
+          check "https://algreen.rs/"              "200"
+          check "https://www.algreen.rs/"          "200"
+          check "https://algreen.rs/kontakt/"      "200"
+          check "https://algreen.rs/sitemap.xml"   "200"
+          check "https://internal.algreen.rs/"     "200 301 302"
+          check "https://konfigurator.algreen.rs/" "200"
+          exit $fail
+
+      - name: Email MX records present
+        run: |
+          mx=$(curl -sS -H 'accept: application/dns-json' 'https://1.1.1.1/dns-query?name=algreen.rs&type=MX')
+          if echo "$mx" | grep -q 'loopia.se'; then
+            echo "OK   MX -> loopia.se present"
+          else
+            echo "::error title=Email::MX records for algreen.rs are missing or changed!"; exit 1
+          fi
+
+      - name: SSL cert not expiring soon
+        run: |
+          end=$(echo | openssl s_client -connect algreen.rs:443 -servername algreen.rs 2>/dev/null | openssl x509 -noout -enddate | cut -d= -f2)
+          endsec=$(date -d "$end" +%s); days=$(( (endsec - $(date +%s)) / 86400 ))
+          echo "cert expires in $days days ($end)"
+          if [ "$days" -lt 14 ]; then
+            echo "::error title=SSL::algreen.rs cert expires in $days days!"; exit 1
+          fi

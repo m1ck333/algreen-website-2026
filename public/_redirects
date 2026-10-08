@@ -7,3 +7,20 @@
 /oprema.html     /oprema/            301
 /detalji.html    /tehnicki-detalji/  301
 /kontakt.html    /kontakt/           301
+
+# Old Angular view templates → their new equivalent pages
+/view/home.html              /                   301
+/view/onama.html             /o-nama/            301
+/view/oprema.html            /oprema/            301
+/view/tehnicki_detalji.html  /tehnicki-detalji/  301
+/view/kontakt.html           /kontakt/           301
+/view/kontakt2.html          /kontakt/           301
+/view/galerija.html          /radovi/            301
+/view/postboxes.html         /oprema/            301
+/view/generator.html         https://konfigurator.algreen.rs/  301
+
+# Old catalog PDF paths (/assets/) → current /files/ location
+/assets/CLASSIC%20AG%2070.pdf    /files/CLASSIC%20AG%2070.pdf    301
+/assets/EXCLUSIVE%20AG%2077.pdf  /files/EXCLUSIVE%20AG%2077.pdf  301
+/assets/PREMIUM%20AG%2085.pdf    /files/PREMIUM%20AG%2085.pdf    301
+/assets/STANDARD%20AG%2070.pdf   /files/STANDARD%20AG%2070.pdf   301
