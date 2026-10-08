@@ -1,13 +1,16 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 
-// Production domain — the site is served directly from Loopia web hosting at
-// the apex (www is a Loopia alias to the apex, so both work; apex is canonical).
+// Production domain (apex, canonical). Hosted on Cloudflare Pages; www is a
+// proxied CNAME to the same project and serves identical content.
 const SITE = 'https://algreen.rs';
 
 export default defineConfig({
   site: SITE,
   server: { port: 3824, host: true },
+  // Inline the (small, ~36KB) CSS into each page so there's no render-blocking
+  // stylesheet request — improves FCP/LCP.
+  build: { inlineStylesheets: 'always' },
   i18n: {
     defaultLocale: 'sr',
     locales: ['sr', 'en'],

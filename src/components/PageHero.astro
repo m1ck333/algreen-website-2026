@@ -7,12 +7,16 @@ interface Props {
   /** Optional uppercase, letter-spaced "kicker" line (e.g. a list of process steps). */
   kicker?: string;
 }
-const { title, subtitle, image = '/img/header.jpg', eyebrow, kicker } = Astro.props;
+const { title, subtitle, image = '/img/header.webp', eyebrow, kicker } = Astro.props;
+
+// Responsive hero: an 800px mobile variant + the base (~1400px). Each hero
+// image has a matching `-800.webp`. Full-bleed, so sizes = 100vw.
+const heroSrcset = image.endsWith('.webp') ? `${image.replace(/\.webp$/, '-800.webp')} 800w, ${image} 1400w` : undefined;
 ---
 
 <section class="relative flex min-h-[52vh] items-end overflow-hidden bg-ink-900 sm:min-h-[60vh]">
   <div class="absolute inset-0 overflow-hidden">
-    <img src={image} alt="" aria-hidden="true" class="h-full w-full animate-kenburns object-cover object-center" />
+    <img src={image} srcset={heroSrcset} sizes="100vw" fetchpriority="high" decoding="async" alt="" aria-hidden="true" class="h-full w-full animate-kenburns object-cover object-center" />
   </div>
   <div class="absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/70 to-ink-900/40"></div>
   <div class="absolute inset-0 bg-noise opacity-[0.04]"></div>
