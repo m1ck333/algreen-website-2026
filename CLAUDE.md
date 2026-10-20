@@ -37,7 +37,8 @@ npm run build    # static output → dist/   (use this to verify — no server)
                  # (= scripts/fetch-content.mjs + astro build; the fetch is a no-op without CMS_URL)
 npm test         # CMS API tests, in-process (fake D1 on node:sqlite + fake R2) — no server
 npm run test:build   # end-to-end: admin edits → static HTML (rewrites dist/, cleans up after)
-npm run admin:user -- <username> "<Name>"   # prints SQL to create/reset an /admin user
+npm run admin:user -- <username> "<Name>" [--local|--remote]   # create/reset an /admin user
+                 # (prints SQL; --local = dev DB in .cms-dev/, --remote = PRODUCTION D1 — needs user OK)
 node scripts/optimize-images.mjs   # downsize+recompress large images in public/img
 
 # The user runs these themselves — do NOT run them:

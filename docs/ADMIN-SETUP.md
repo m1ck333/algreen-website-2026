@@ -70,8 +70,9 @@ Run from the repo root with a Cloudflare token that has D1 + R2 + Pages permissi
      permission **Actions: Read and write**. Choose the longest expiry and **put a reminder to
      renew it**. When it expires, "Objavi" shows an error.
      `npx wrangler pages secret put GITHUB_TOKEN --project-name algreen-site-2026`
-6. **Users:** `npm run admin:user -- monika "Monika"` (prints a random password + SQL), then
-   `npx wrangler d1 execute algreen-cms --remote --command "<SQL>"`. Same for `milos`.
+6. **Users:** `npm run admin:user -- monika "Monika" --remote` (random password, printed once;
+   writes the user straight into D1). Same for `milos`. Re-running it resets that user's password
+   (e.g. if Monika forgets hers). Without `--remote` it only prints the SQL.
 7. **Deploy:** merge `feature/admin-cms` → `main` and push (Actions deploys). The first build
    reads `/api/content` from the old deployment (404 HTML) and uses the defaults.
 8. **Verify:** `https://algreen.rs/api/content` → `{"v":1,"empty":true}`. Then
