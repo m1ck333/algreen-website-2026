@@ -713,7 +713,7 @@ function viewGallery(): Node[] {
           { class: 'tools' },
           h('button', { type: 'button', class: 'btn icon small', title: 'Pomeri levo / gore', 'aria-label': 'Pomeri unazad', onclick: () => move(i, i - 1), disabled: i === 0 }, '←'),
           h('button', { type: 'button', class: 'btn icon small', title: 'Pomeri desno / dole', 'aria-label': 'Pomeri unapred', onclick: () => move(i, i + 1), disabled: i === items.length - 1 }, '→'),
-          h('button', { type: 'button', class: 'btn small', title: 'Stavi na početak', onclick: () => move(i, 0), disabled: i === 0 }, 'Na početak'),
+          h('span', { class: 'sp' }),
           h(
             'button',
             {
@@ -732,8 +732,9 @@ function viewGallery(): Node[] {
             'button',
             {
               type: 'button',
-              class: 'btn small danger',
-              title: 'Obriši sa sajta',
+              class: 'btn icon small danger',
+              title: 'Obriši iz galerije',
+              'aria-label': 'Obriši iz galerije',
               onclick: () => {
                 if (!confirm('Obrisati ovu fotografiju iz galerije?')) return;
                 items.splice(i, 1);
@@ -741,7 +742,7 @@ function viewGallery(): Node[] {
                 renderView();
               },
             },
-            'Obriši',
+            '🗑',
           ),
         ),
       ),
@@ -1287,7 +1288,7 @@ function viewHelp(): Node[] {
         'ul',
         {},
         li('Najbolje su JPG fotografije sa telefona ili fotoaparata — ne morate ih smanjivati, to radimo automatski.'),
-        li('„Sakrij” privremeno sklanja sliku sa sajta (možete je vratiti). „Obriši” je trajno uklanja iz galerije.'),
+        li('„Sakrij” privremeno sklanja sliku sa sajta (možete je vratiti). Kanta 🗑 je trajno uklanja iz galerije.'),
         li('Dodajte kratak opis slike (npr. „Ulazna vrata EXCLUSIVE AG 77, Niš”) — pomaže da vas ljudi pronađu na Google-u.'),
       ),
       h('h2', {}, 'Vraćanje na staro'),
