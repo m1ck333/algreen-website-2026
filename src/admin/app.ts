@@ -117,6 +117,39 @@ const mediaUrl = (id: string) => `/api/media/${id}`;
 const fmtTime = (ms: number) =>
   new Date(ms).toLocaleString('sr-Latn-RS', { day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
+/**
+ * Styled confirmation dialog (instead of the browser's native confirm box).
+ * Resolves true on OK; Esc / backdrop click / "Odustani" → false.
+ */
+function ask(o: { title: string; text?: string; ok: string; danger?: boolean; image?: string }): Promise<boolean> {
+  return new Promise((resolve) => {
+    const dlg = h('dialog', { class: 'modal', 'aria-labelledby': 'modal-t' });
+    const done = (v: boolean) => {
+      dlg.close();
+      dlg.remove();
+      resolve(v);
+    };
+    const okBtn = h('button', { type: 'button', class: `btn ${o.danger ? 'danger-fill' : 'primary'}`, onclick: () => done(true) }, o.ok);
+    const cancelBtn = h('button', { type: 'button', class: 'btn', onclick: () => done(false) }, 'Odustani');
+    const parts: (HTMLElement | null)[] = [
+      o.image ? h('img', { class: 'modal-img', src: o.image, alt: '' }) : null,
+      h('h2', { id: 'modal-t' }, o.title),
+      o.text ? h('p', {}, o.text) : null,
+      h('div', { class: 'modal-actions' }, cancelBtn, okBtn),
+    ];
+    for (const p of parts) if (p) dlg.append(p);
+    dlg.addEventListener('cancel', (e) => {
+      e.preventDefault();
+      done(false);
+    });
+    dlg.addEventListener('click', (e) => e.target === dlg && done(false));
+    document.body.append(dlg);
+    dlg.showModal();
+    // Destructive → Enter shouldn't delete by accident.
+    (o.danger ? cancelBtn : okBtn).focus();
+  });
+}
+
 let toastTimer = 0;
 function toast(msg: string, err = false) {
   document.querySelector('.toast')?.remove();
@@ -323,8 +356,8 @@ function touch(n: Name) {
   updateChrome();
 }
 
-function resetSection(n: Name, msg: string) {
-  if (!confirm(msg)) return;
+async function resetSection(n: Name, msg: string) {
+  if (!(await ask({ title: 'Vratiti original?', text: msg, ok: 'Vrati original', danger: true }))) return;
   (work as Record<Name, unknown>)[n] = clone(defaultsFor(n));
   dirty.add(n);
   toNull.add(n);
@@ -364,8 +397,8 @@ async function saveAll(quiet = false): Promise<boolean> {
   }
 }
 
-function discardAll() {
-  if (!confirm('Odbaciti sve nesačuvane izmene?')) return;
+async function discardAll() {
+  if (!(await ask({ title: 'Poništiti izmene?', text: 'Sve što ste promenili od poslednjeg čuvanja biće vraćeno.', ok: 'Poništi izmene', danger: true }))) return;
   for (const n of dirty) delete work[n];
   dirty.clear();
   toNull.clear();
@@ -383,7 +416,7 @@ async function publish() {
     toast('Nema novih izmena za objavu.');
     return;
   }
-  if (!confirm('Objaviti izmene na sajtu?\n\nSajt se ažurira za oko 2 minuta.')) return;
+  if (!(await ask({ title: 'Objaviti izmene na sajtu?', text: 'Posetioci će videti nove izmene za oko 2 minuta.', ok: 'Objavi' }))) return;
   setBusy(true);
   try {
     const r = await api<{ publishedAt: number }>('POST', '/api/admin/publish');
@@ -439,6 +472,19 @@ const TABS: [string, string, Name | null][] = [
   ['help', 'Pomoć', null],
 ];
 let tab = 'gallery';
+// Shown in the header instead of the tab bar (Nalog = the user button, Pomoć = "?").
+const HEADER_TABS = new Set(['account', 'help']);
+// Hidden unless "Napredne opcije" is switched on in Nalog (per browser).
+const ADVANCED_TABS = new Set(['texts']);
+const ADV_KEY = 'algreen-admin-advanced';
+function advancedOn(): boolean {
+  try {
+    return localStorage.getItem(ADV_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+const navTabs = () => TABS.filter(([id]) => !HEADER_TABS.has(id) && (advancedOn() || !ADVANCED_TABS.has(id)));
 
 function setBusy(b: boolean) {
   document.querySelectorAll<HTMLButtonElement>('[data-busy]').forEach((el) => (el.disabled = b));
@@ -484,12 +530,22 @@ function renderShell() {
           h('button', { type: 'button', class: 'btn primary', 'data-busy': true, onclick: publish }, 'Objavi na sajt'),
           h('a', { class: 'btn ghost small', href: '/', target: '_blank', rel: 'noopener' }, 'Pogledaj sajt ↗'),
         ),
-        h('span', { class: 'who' }, S.user.name),
+        h(
+          'div',
+          { class: 'me' },
+          h('button', { type: 'button', class: 'btn ghost small', 'data-tab': 'help', title: 'Pomoć', 'aria-label': 'Pomoć', onclick: () => go('help') }, '?'),
+          h(
+            'button',
+            { type: 'button', class: 'btn ghost small', 'data-tab': 'account', title: 'Nalog (lozinka, odjava)', onclick: () => go('account') },
+            '👤',
+            h('span', { class: 'who' }, S.user.name),
+          ),
+        ),
       ),
       h(
         'nav',
         { class: 'tabs', role: 'tablist' },
-        TABS.map(([id, label]) =>
+        navTabs().map(([id, label]) =>
           h('button', { type: 'button', role: 'tab', 'data-tab': id, 'aria-selected': String(id === tab), onclick: () => go(id) }, label),
         ),
       ),
@@ -516,7 +572,7 @@ function renderShell() {
 function go(id: string) {
   tab = TABS.some((t) => t[0] === id) ? id : 'gallery';
   if (location.hash !== `#${tab}`) history.replaceState(null, '', `#${tab}`);
-  document.querySelectorAll<HTMLElement>('.tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+  document.querySelectorAll<HTMLElement>('.tabs button, .me button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
   renderView();
   window.scrollTo(0, 0);
 }
@@ -735,8 +791,15 @@ function viewGallery(): Node[] {
               class: 'btn icon small danger',
               title: 'Obriši iz galerije',
               'aria-label': 'Obriši iz galerije',
-              onclick: () => {
-                if (!confirm('Obrisati ovu fotografiju iz galerije?')) return;
+              onclick: async () => {
+                const ok = await ask({
+                  title: 'Obrisati ovu fotografiju?',
+                  text: 'Fotografija će biti uklonjena iz galerije. Ako želite samo privremeno da je sklonite, izaberite „Sakrij”.',
+                  ok: 'Obriši',
+                  danger: true,
+                  image: preview,
+                });
+                if (!ok) return;
                 items.splice(i, 1);
                 touch('gallery');
                 renderView();
@@ -1016,8 +1079,9 @@ function viewFaq(): Node[] {
               {
                 type: 'button',
                 class: 'btn small danger',
-                onclick: () => {
-                  if (!confirm('Obrisati ovo pitanje?')) return;
+                onclick: async () => {
+                  const q = f.q.sr || f.q.en;
+                  if (!(await ask({ title: 'Obrisati ovo pitanje?', text: q ? `„${q}”` : undefined, ok: 'Obriši', danger: true }))) return;
                   items.splice(i, 1);
                   t();
                   renderView();
@@ -1247,6 +1311,23 @@ function viewAccount(): Node[] {
     h('p', { class: 'lead' }, `Prijavljeni ste kao ${S.user.name} (${S.user.username}).`),
     form,
     h(
+      'label',
+      { class: 'adv' },
+      h('input', {
+        type: 'checkbox',
+        checked: advancedOn(),
+        onchange: (e: Event) => {
+          try {
+            localStorage.setItem(ADV_KEY, (e.target as HTMLInputElement).checked ? '1' : '0');
+          } catch {
+            /* private mode */
+          }
+          renderShell();
+        },
+      }),
+      h('span', {}, h('strong', {}, 'Napredne opcije'), ' — prikazuje karticu „Tekstovi” (svi tekstovi na sajtu i naslovi za Google). Uključite samo ako znate šta menjate.'),
+    ),
+    h(
       'p',
       {},
       h(
@@ -1255,7 +1336,7 @@ function viewAccount(): Node[] {
           type: 'button',
           class: 'btn',
           onclick: async () => {
-            if (dirty.size && !confirm('Imate nesačuvane izmene. Ipak se odjaviti?')) return;
+            if (dirty.size && !(await ask({ title: 'Odjaviti se?', text: 'Imate izmene koje niste sačuvali — biće izgubljene.', ok: 'Odjavi se', danger: true }))) return;
             dirty.clear();
             await api('POST', '/api/admin/logout').catch(() => {});
             renderLogin('Odjavljeni ste.');
@@ -1278,7 +1359,7 @@ function viewHelp(): Node[] {
       h(
         'ol',
         {},
-        li('Izmenite šta želite u bilo kojoj kartici (slike, tekstovi, kontakt…).'),
+        li('Izmenite šta želite u bilo kojoj kartici (slike, kontakt, obaveštenje…).'),
         li('Kliknite „Sačuvaj izmene” (traka na dnu ekrana). Izmene su sačuvane, ali još nisu na sajtu.'),
         li('Kada ste spremni, kliknite „Objavi na sajt”. Za oko 2 minuta izmene su vidljive svima.'),
       ),

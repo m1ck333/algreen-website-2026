@@ -1,11 +1,11 @@
 # Uređivanje sajta algreen.rs — kratko uputstvo
 
 **Adresa:** https://algreen.rs/admin/
-Prijavite se korisničkim imenom i lozinkom koje ste dobili. Lozinku možete promeniti u kartici **Nalog**.
+Prijavite se korisničkim imenom i lozinkom koje ste dobili. Lozinku možete promeniti klikom na **👤** (gore desno); tu je i odjava. Dugme **?** otvara pomoć.
 
 ## Kako se menja sajt — 3 koraka
 
-1. **Izmenite** šta želite (slike, tekstove, kontakt…).
+1. **Izmenite** šta želite (slike, kontakt, obaveštenje…).
 2. Kliknite **„Sačuvaj izmene”** (traka na dnu ekrana). Izmene su sačuvane, ali još nisu na sajtu.
 3. Kliknite **„Objavi na sajt”** (crveno dugme gore). Za **oko 2 minuta** izmene su vidljive svima.
 
@@ -20,7 +20,6 @@ Ako posle 5 minuta ne vidite promenu, osvežite stranicu (na telefonu povucite n
 | **Katalozi i PDF** | Zamena PDF kataloga i tehničkih listova novom verzijom |
 | **Kontakt podaci** | Telefoni, e-mail adrese, adrese poslovnica, Facebook/Instagram, WhatsApp |
 | **Česta pitanja** | Dodavanje, izmena, brisanje i redosled pitanja na početnoj strani |
-| **Tekstovi** | Svaki tekst na sajtu, na srpskom i engleskom — nađite ga pretragom |
 | **Obaveštenje** | Crvena traka na vrhu sajta (npr. „Kolektivni godišnji odmor od 1. do 15. avgusta”) |
 
 ## Saveti za fotografije
