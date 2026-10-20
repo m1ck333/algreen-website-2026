@@ -14,8 +14,9 @@ const gh = (env) => ({
   ref: env.GITHUB_REF || 'main',
 });
 
+// env.GITHUB_FETCH: optional stand-in for fetch (local dev server, scripts/dev-cms.mjs).
 const ghFetch = (env, path, init = {}) =>
-  fetch(`https://api.github.com${path}`, {
+  (env.GITHUB_FETCH || fetch)(`https://api.github.com${path}`, {
     ...init,
     headers: {
       authorization: `Bearer ${env.GITHUB_TOKEN}`,

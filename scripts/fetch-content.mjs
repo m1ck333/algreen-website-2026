@@ -11,7 +11,7 @@
  * Everything ends up as plain static files → SEO identical to hand-written pages.
  *
  * Safety:
- * - CMS_URL unset (local builds) → no-op; the site uses the built-in defaults.
+ * - CMS_URL unset (local builds) → built-in defaults (clears leftovers from the dev server).
  * - 404 from a non-JSON page (endpoint not deployed yet) → defaults.
  * - Any other failure (5xx, network, bad JSON) → exit 1 so the deploy FAILS and the
  *   currently live site stays up, rather than shipping the defaults over the
@@ -111,7 +111,10 @@ export async function run({ base: baseUrl = process.env.CMS_URL || '', fetch: f 
   if (f) fetchImpl = f;
   const base = baseUrl.replace(/\/+$/, '');
   if (!base) {
+    // Drop anything a local dev-server publish left behind, so a local build is
+    // always the built-in content (same as before the CMS existed).
     log('CMS_URL not set — building with built-in content (local build).');
+    await clearGenerated();
     return;
   }
 

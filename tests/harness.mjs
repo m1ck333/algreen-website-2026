@@ -44,8 +44,9 @@ class Stmt {
 }
 
 export class FakeD1 {
-  constructor() {
-    this.db = new DatabaseSync(':memory:');
+  /** @param {string} [file] SQLite file (persistent, used by the dev server); in-memory by default. */
+  constructor(file = ':memory:') {
+    this.db = new DatabaseSync(file);
     this.db.exec(fs.readFileSync(new URL('../migrations/0001_cms.sql', import.meta.url), 'utf8'));
   }
   prepare(sql) {

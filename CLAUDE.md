@@ -83,6 +83,10 @@ Full details + go-live checklist: **`docs/ADMIN-SETUP.md`**. Client guide (Serbi
 - **Adding an image to the site?** Register it in `SLOTS` and render it with `img(key)`. It then
   becomes editable in the admin automatically. New copy in `ui.ts` shows up in the "Tekstovi" tab
   (legacy/unrendered keys are hidden via `HIDDEN_TEXT` in `src/pages/admin/index.astro`).
+- **Local testing:** under `npm run dev` (user runs it), `/admin` works fully via a dev-only
+  backend (`scripts/dev-cms.mjs`, wired in `astro.config.mjs`): same function code, SQLite +
+  files in `.cms-dev/`, login `monika` / `algreen-dev`. "Objavi" regenerates the content locally
+  (no GitHub). `npm run build` without `CMS_URL` clears those leftovers → defaults.
 - Tailwind **excludes** `src/lib/**` and the admin (own CSS), so they never bloat the CSS that
   gets inlined into public pages.
 

@@ -26,3 +26,5 @@ npm-debug.log*
 src/data/cms.generated.json
 public/m/
 .cms-cache/
+# local admin backend for `npm run dev` (scripts/dev-cms.mjs)
+.cms-dev/

@@ -43,6 +43,12 @@ limit (8 fails / 15 min per IP and per user); CSRF via the `X-Admin: 1` header p
 uploads typed by magic bytes (JPG/PNG/WebP/PDF only); links limited to http(s)/mailto/tel/relative;
 JSON-LD `<` escaped; `/admin` is noindex + robots-disallowed and not in the sitemap.
 
+Local try-out: with `npm run dev`, open `http://localhost:3824/admin/` and log in as
+`monika` / `algreen-dev`. A dev-only backend (`scripts/dev-cms.mjs`) runs the same function code
+on SQLite + files in `.cms-dev/` (delete the folder to start over). "Objavi na sajt" regenerates
+`src/data/cms.generated.json` + `public/m/` locally (reload to see it); nothing goes to GitHub or
+Cloudflare. The next plain `npm run build` clears those files again.
+
 Tests (no servers, no Cloudflare): `npm test` (API, fake D1 on `node:sqlite` + fake R2) and
 `npm run test:build` (end-to-end edits → static HTML; rewrites `dist/`). CI runs `npm test`
 before every deploy.

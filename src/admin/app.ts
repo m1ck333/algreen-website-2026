@@ -155,6 +155,7 @@ async function api<T = any>(method: string, path: string, body?: unknown): Promi
     renderLogin(S ? 'Sesija je istekla — prijavite se ponovo.' : '');
     throw new ApiError(401, 'Niste prijavljeni.');
   }
+  if (res.status === 404 && !data.error) throw new ApiError(404, 'Servis za uređivanje nije dostupan na ovoj adresi (API ne odgovara).');
   if (!res.ok || data.ok === false) throw new ApiError(res.status, data.error || `Greška (${res.status}).`, data);
   return data as T;
 }
