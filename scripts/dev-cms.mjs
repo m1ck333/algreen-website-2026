@@ -14,7 +14,7 @@ import { hashPassword } from '../functions/_lib/auth.js';
 import { run as fetchContent } from './fetch-content.mjs';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
-const DIR = path.join(ROOT, '.cms-dev');
+const DEFAULT_DIR = path.join(ROOT, '.cms-dev');
 const DEV_USER = 'monika';
 const DEV_PASS = 'algreen-dev';
 
@@ -55,24 +55,40 @@ class FileR2 {
   }
 }
 
-export async function createDevCms({ log = console.log } = {}) {
-  fs.mkdirSync(DIR, { recursive: true });
-  const db = new FakeD1(path.join(DIR, 'db.sqlite'));
-  if (!db.db.prepare('SELECT 1 FROM users LIMIT 1').get()) {
-    const { hash, salt, iter } = await hashPassword(DEV_PASS);
-    const now = Date.now();
-    db.db
-      .prepare('INSERT INTO users (username, display_name, pw_hash, pw_salt, pw_iter, pw_changed_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
-      .run(DEV_USER, 'Monika (lokalno)', hash, salt, iter, now, now);
+export async function createDevCms({ log = console.log, dir: DIR = DEFAULT_DIR } = {}) {
+  const file = path.join(DIR, 'db.sqlite');
+  let db = null;
+  let ino = null;
+  // (Re)open the DB if it isn't open yet or the file was deleted/replaced while the
+  // dev server runs (e.g. `rm -rf .cms-dev` to start over) — otherwise SQLite keeps
+  // using the deleted file and every write fails.
+  async function openDb() {
+    const cur = fs.existsSync(file) ? fs.statSync(file).ino : null;
+    if (db && cur === ino) return db;
+    db?.db.close();
+    fs.mkdirSync(DIR, { recursive: true });
+    db = new FakeD1(file);
+    ino = fs.statSync(file).ino;
+    if (!db.db.prepare('SELECT 1 FROM users LIMIT 1').get()) {
+      const { hash, salt, iter } = await hashPassword(DEV_PASS);
+      const now = Date.now();
+      db.db
+        .prepare('INSERT INTO users (username, display_name, pw_hash, pw_salt, pw_iter, pw_changed_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
+        .run(DEV_USER, 'Monika (lokalno)', hash, salt, iter, now, now);
+      log(`[dev-cms] new local DB — login ${DEV_USER} / ${DEV_PASS}`);
+    }
+    return db;
   }
+  await openDb();
 
   // Fake GitHub: a "deploy" = regenerate the content files locally.
   let run = null; // { status, conclusion, createdAt, updatedAt }
   const env = {
-    DB: db,
+    DB: null, // set per request by openDb()
     MEDIA: new FileR2(path.join(DIR, 'r2')),
     SESSION_SECRET: 'local-dev-only-secret-not-used-in-production',
     GITHUB_TOKEN: 'dev',
+    DEV_ERRORS: true,
     async GITHUB_FETCH(url, init = {}) {
       if (init.method === 'POST') {
         const at = new Date().toISOString();
@@ -98,6 +114,7 @@ export async function createDevCms({ log = console.log } = {}) {
     const pathname = (req.url || '').split('?')[0];
     if (!/^\/api\/(admin\/|content$|media\/)/.test(pathname)) return next();
     try {
+      env.DB = await openDb();
       const headers = new Headers();
       for (const [k, v] of Object.entries(req.headers)) {
         if (v === undefined || k.startsWith(':')) continue;

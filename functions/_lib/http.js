@@ -22,7 +22,9 @@ export const handle = (fn) => async (ctx) => {
   } catch (e) {
     if (e instanceof HttpError) return json(e.status, { ok: false, error: e.message, ...e.extra });
     console.error('cms error', e && e.stack ? e.stack : e);
-    return json(500, { ok: false, error: 'Greška na serveru. Pokušajte ponovo.' });
+    // env.DEV_ERRORS is only set by the local dev backend (scripts/dev-cms.mjs).
+    const detail = ctx.env?.DEV_ERRORS ? ` [dev: ${e?.message || e}]` : '';
+    return json(500, { ok: false, error: `Greška na serveru. Pokušajte ponovo.${detail}` });
   }
 };
 
