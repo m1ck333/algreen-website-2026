@@ -1,11 +1,17 @@
 name: Deploy to Cloudflare Pages
 
 # Every push to main builds the static site and deploys it to the
-# algreen-site-2026 Pages project. Manual runs available via "Run workflow".
+# algreen-site-2026 Pages project. Also triggered by the admin's "Objavi na sajt"
+# button (workflow_dispatch via the GitHub API) and manually via "Run workflow".
 on:
   push:
     branches: [main]
   workflow_dispatch:
+
+# One deploy at a time; a newer publish supersedes a queued/running one.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -13,14 +19,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # wrangler requires Node >= 22.
+      # wrangler requires Node >= 22 (also gives the tests node:sqlite).
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
       - run: npm ci
+
+      - name: Test CMS API
+        run: npm test
+
+      # Downloaded uploads + rendered webp variants, reused between deploys.
+      - uses: actions/cache@v4
+        with:
+          path: .cms-cache
+          key: cms-cache-${{ github.run_id }}
+          restore-keys: cms-cache-
+
+      # `npm run build` first pulls the PUBLISHED admin content from the live site
+      # (scripts/fetch-content.mjs) and bakes it into static HTML. If that fetch
+      # fails the build fails, so the live site is never replaced by defaults.
       - run: npm run build
+        env:
+          CMS_URL: https://algreen.rs
 
       - name: Deploy to Cloudflare Pages
         run: npx --yes wrangler@4 pages deploy dist --project-name algreen-site-2026 --branch main

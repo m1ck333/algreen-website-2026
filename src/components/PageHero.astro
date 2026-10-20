@@ -1,17 +1,24 @@
 ---
+import type { Img } from '../lib/cms';
+
 interface Props {
   title: string;
   subtitle?: string;
-  image?: string;
+  /** A path, or a resolved slot image (`img('hero.about')`) with its own srcset. */
+  image?: string | Img;
   eyebrow?: string;
   /** Optional uppercase, letter-spaced "kicker" line (e.g. a list of process steps). */
   kicker?: string;
 }
-const { title, subtitle, image = '/img/header.webp', eyebrow, kicker } = Astro.props;
+const { title, subtitle, image: imageProp = '/img/header.webp', eyebrow, kicker } = Astro.props;
 
 // Responsive hero: an 800px mobile variant + the base (~1400px). Each hero
 // image has a matching `-800.webp`. Full-bleed, so sizes = 100vw.
-const heroSrcset = image.endsWith('.webp') ? `${image.replace(/\.webp$/, '-800.webp')} 800w, ${image} 1400w` : undefined;
+const image = typeof imageProp === 'string' ? imageProp : imageProp.src;
+const heroSrcset =
+  typeof imageProp !== 'string'
+    ? imageProp.srcset
+    : image.endsWith('.webp') ? `${image.replace(/\.webp$/, '-800.webp')} 800w, ${image} 1400w` : undefined;
 ---
 
 <section class="relative flex min-h-[52vh] items-end overflow-hidden bg-ink-900 sm:min-h-[60vh]">

@@ -34,6 +34,10 @@ The door **configurator** is a separate external app: `https://konfigurator.algr
 ```bash
 npm install
 npm run build    # static output → dist/   (use this to verify — no server)
+                 # (= scripts/fetch-content.mjs + astro build; the fetch is a no-op without CMS_URL)
+npm test         # CMS API tests, in-process (fake D1 on node:sqlite + fake R2) — no server
+npm run test:build   # end-to-end: admin edits → static HTML (rewrites dist/, cleans up after)
+npm run admin:user -- <username> "<Name>"   # prints SQL to create/reset an /admin user
 node scripts/optimize-images.mjs   # downsize+recompress large images in public/img
 
 # The user runs these themselves — do NOT run them:
@@ -60,6 +64,27 @@ CLOUDFLARE_API_TOKEN="$(cat ~/.jamogu-cf-token)" \
   vars + `[observability]`; `SMTP_PASS` is a Pages secret. (`public/.htaccess` + `api/contact.php`
   are a dormant Loopia/Apache fallback.)
 - Vercel was fully removed (2026-07). Don't use the old `vercel … --archive=tgz` command.
+
+## Admin CMS (`/admin`) — client edits content herself
+
+Full details + go-live checklist: **`docs/ADMIN-SETUP.md`**. Client guide (Serbian):
+`docs/UPUTSTVO-ZA-MONIKU.md`. Built on branch `feature/admin-cms`.
+
+- **Build-time content, never client-side** (SEO): drafts in **D1**, uploads in **R2**, edited via
+  Pages Functions `functions/api/admin/*` (auth in `functions/_lib/auth.js`). "Objavi na sajt"
+  freezes a **published snapshot** and triggers `deploy.yml` (workflow_dispatch via a GitHub PAT).
+  The build runs `scripts/fetch-content.mjs` → `src/data/cms.generated.json` + `public/m/*`
+  (both gitignored), and the components read them through `src/lib/cms.ts`.
+- **Defaults live in code** and are used whenever nothing is published, so the output is identical
+  to the hand-coded site:
+  image/PDF slots in `src/lib/slots.ts` (`img('home.hero.1')`, `doc('catalog')`), gallery in
+  `src/lib/gallery.ts`, text/FAQ overrides applied in `useTranslations` (`ui.ts`), contact
+  settings merged into `company` (`config.ts`), announcement bar in `Header.astro`.
+- **Adding an image to the site?** Register it in `SLOTS` and render it with `img(key)`. It then
+  becomes editable in the admin automatically. New copy in `ui.ts` shows up in the "Tekstovi" tab
+  (legacy/unrendered keys are hidden via `HIDDEN_TEXT` in `src/pages/admin/index.astro`).
+- Tailwind **excludes** `src/lib/**` and the admin (own CSS), so they never bloat the CSS that
+  gets inlined into public pages.
 
 ## Domain / DNS / email  ⚠️ careful here
 
@@ -120,8 +145,9 @@ is **deferred to first user interaction** (in `BaseLayout`) to keep it off the c
 - Images in `public/img/`, PDFs in `public/files/`. Referenced by absolute path (`/img/...`).
 - Only **referenced** assets were kept — old site's unused subfolders, videos (~290 MB) and
   duplicate PDFs were pruned. `public/` is ~40 MB. If you add a large image, run the optimizer.
-- The Works gallery uses `public/img/{1..31}.webp` (numbered door photos), built dynamically
-  in `WorksContent.astro`.
+- The Works gallery defaults to `public/img/{1..31}.webp` (numbered door photos, list in
+  `src/lib/gallery.ts`); once the client publishes a gallery from /admin, that list wins.
+  Uploaded images are served from `/m/` (generated at build).
 
 ## To add a new page
 1. Add a route key + paths to `src/i18n/routes.ts`.
@@ -140,7 +166,8 @@ is **deferred to first user interaction** (in `BaseLayout`) to keep it off the c
   (`public/_headers`).
 - **GTM** is wired (deferred — see Analytics). `site.webmanifest` exists.
 - Standing OK to proactively monitor/optimize (analytics, perf, SEO) — see project memory
-  (`Monitoring mandate`). Deploy improvements straight via `git push`.
+  (`Monitoring mandate`). **But since 2026-10-20: do NOT deploy (push to `main`) or change live
+  Cloudflare resources without the user's explicit OK** — prepare changes on a branch.
 
 ## Gotchas
 - `@astrojs/sitemap` was removed — its i18n mode crashed with this Astro version. We generate

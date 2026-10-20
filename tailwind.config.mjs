@@ -1,6 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./src/**/*.{astro,html,js,jsx,ts,tsx,md,mdx}'],
+  // src/lib (TS helpers) and the admin UI contain no site classes — excluded so stray
+  // words like ".filter(" don't add utilities to the CSS inlined into every page.
+  content: ['./src/**/*.{astro,html,js,jsx,ts,tsx,md,mdx}', '!./src/lib/**', '!./src/admin/**', '!./src/pages/admin/**'],
+  // `.filter(` in TS code would otherwise generate an unused `.filter` utility.
+  blocklist: ['filter'],
   theme: {
     extend: {
       colors: {

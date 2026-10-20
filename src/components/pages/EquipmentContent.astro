@@ -1,6 +1,7 @@
 ---
 import { useTranslations } from '../../i18n/ui';
 import { company, type Lang } from '../../i18n/config';
+import { img } from '../../lib/slots';
 import PageHero from '../PageHero.astro';
 import CtaBand from '../CtaBand.astro';
 
@@ -11,11 +12,14 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 
 // Small visual galleries reused from the legacy asset set.
-const handles = ['/img/rukohvat1.png', '/img/rukohvat2.png', '/img/rukohvat3.png', '/img/kvaka1.png', '/img/kvaka2.png', '/img/kvaka3.png'];
-const locks = ['/img/brava5.png', '/img/brava6.png', '/img/brava7.png', '/img/cilindar1.png', '/img/sarke1.png', '/img/rozeta1.png'];
+const handles = [1, 2, 3, 4, 5, 6].map((i) => img(`equipment.handle.${i}`));
+const locks = [1, 2, 3, 4, 5, 6].map((i) => img(`equipment.lock.${i}`));
+const categoryImages = t.equipment.categories.map((_, i) => img(`equipment.category.${i + 1}`));
+const fingerprint = img('equipment.fingerprint');
+const mailbox = img('equipment.mailbox');
 ---
 
-<PageHero title={t.equipment.title} subtitle={t.equipment.subtitle} eyebrow={t.nav.equipment} image="/img/header.webp" />
+<PageHero title={t.equipment.title} subtitle={t.equipment.subtitle} eyebrow={t.nav.equipment} image={img('hero.equipment')} />
 
 <!-- Intro -->
 <section class="section">
@@ -27,10 +31,10 @@ const locks = ['/img/brava5.png', '/img/brava6.png', '/img/brava7.png', '/img/ci
   <!-- Categories -->
   <div class="container-px mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
     {
-      t.equipment.categories.map((c) => (
+      t.equipment.categories.map((c, i) => (
         <article class="group overflow-hidden rounded-2xl bg-white/[0.04] ring-1 ring-white/10 transition-all duration-300 hover:-translate-y-1.5 hover:bg-white/[0.07] reveal">
           <div class="aspect-square overflow-hidden bg-white">
-            <img src={c.img} alt={c.title} loading="lazy" class="h-full w-full object-contain p-8 transition-transform duration-500 group-hover:scale-105" />
+            <img src={categoryImages[i].src} srcset={categoryImages[i].srcset} sizes={categoryImages[i].srcset && '(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw'} alt={c.title} loading="lazy" class="h-full w-full object-contain p-8 transition-transform duration-500 group-hover:scale-105" />
           </div>
           <div class="border-t border-white/10 p-6">
             <h3 class="text-lg font-semibold text-white">{c.title}</h3>
@@ -50,7 +54,7 @@ const locks = ['/img/brava5.png', '/img/brava6.png', '/img/brava7.png', '/img/ci
       <div class="grid grid-cols-3 gap-4 sm:grid-cols-6">
         {handles.map((h) => (
           <div class="group flex aspect-square items-center justify-center rounded-xl bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-2 hover:ring-accent/40">
-            <img src={h} alt="" loading="lazy" class="max-h-full w-auto object-contain transition-transform duration-500 group-hover:scale-110" />
+            <img src={h.src} srcset={h.srcset} sizes={h.srcset && '(min-width: 640px) 16vw, 33vw'} alt="" loading="lazy" class="max-h-full w-auto object-contain transition-transform duration-500 group-hover:scale-110" />
           </div>
         ))}
       </div>
@@ -60,7 +64,7 @@ const locks = ['/img/brava5.png', '/img/brava6.png', '/img/brava7.png', '/img/ci
       <div class="grid grid-cols-3 gap-4 sm:grid-cols-6">
         {locks.map((h) => (
           <div class="group flex aspect-square items-center justify-center rounded-xl bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-2 hover:ring-accent/40">
-            <img src={h} alt="" loading="lazy" class="max-h-full w-auto object-contain transition-transform duration-500 group-hover:scale-110" />
+            <img src={h.src} srcset={h.srcset} sizes={h.srcset && '(min-width: 640px) 16vw, 33vw'} alt="" loading="lazy" class="max-h-full w-auto object-contain transition-transform duration-500 group-hover:scale-110" />
           </div>
         ))}
       </div>
@@ -77,7 +81,7 @@ const locks = ['/img/brava5.png', '/img/brava6.png', '/img/brava7.png', '/img/ci
     </div>
     <div class="grid items-center gap-10 lg:grid-cols-2">
       <div class="group overflow-hidden rounded-2xl reveal">
-        <img src="/img/fingerprint2.png" alt={t.equipment.fingerprint} loading="lazy" class="w-full bg-ink-900 object-contain p-10 transition-transform duration-700 ease-out group-hover:scale-105" />
+        <img src={fingerprint.src} srcset={fingerprint.srcset} sizes={fingerprint.srcset && '(min-width: 1024px) 50vw, 100vw'} alt={t.equipment.fingerprint} loading="lazy" class="w-full bg-ink-900 object-contain p-10 transition-transform duration-700 ease-out group-hover:scale-105" />
       </div>
       <div class="reveal">
         <h3 class="text-2xl font-semibold text-white">{t.equipment.fingerprint}</h3>
@@ -109,7 +113,7 @@ const locks = ['/img/brava5.png', '/img/brava6.png', '/img/brava7.png', '/img/ci
       <a href={company.configurator} target="_blank" rel="noopener" class="btn-primary mt-8">{t.common.configurator}</a>
     </div>
     <div class="group overflow-hidden rounded-2xl shadow-xl reveal">
-      <img src="/img/sanduce.jpg" alt={t.equipment.boxHeading} loading="lazy" class="w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+      <img src={mailbox.src} srcset={mailbox.srcset} sizes={mailbox.srcset && '(min-width: 1024px) 50vw, 100vw'} alt={t.equipment.boxHeading} loading="lazy" class="w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
     </div>
   </div>
 </section>

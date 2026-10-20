@@ -1,6 +1,7 @@
 ---
 import { useTranslations } from '../../i18n/ui';
 import { company, type Lang } from '../../i18n/config';
+import { img } from '../../lib/slots';
 import PageHero from '../PageHero.astro';
 
 interface Props {
@@ -11,7 +12,7 @@ const t = useTranslations(lang);
 const txt = (v: string | Record<Lang, string>) => (typeof v === 'string' ? v : v[lang]);
 ---
 
-<PageHero title={t.contact.title} subtitle={t.contact.subtitle} eyebrow={t.nav.contact} image="/img/kontakt.webp" />
+<PageHero title={t.contact.title} subtitle={t.contact.subtitle} eyebrow={t.nav.contact} image={img('hero.contact')} />
 
 <section class="section">
   <div class="container-px grid gap-12 lg:grid-cols-[1fr_1.1fr]">

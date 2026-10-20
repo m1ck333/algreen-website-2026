@@ -1,6 +1,7 @@
 ---
 import { useTranslations } from '../../i18n/ui';
 import { type Lang } from '../../i18n/config';
+import { img, doc } from '../../lib/slots';
 import PageHero from '../PageHero.astro';
 import CtaBand from '../CtaBand.astro';
 
@@ -9,10 +10,11 @@ interface Props {
 }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
-const systems = t.technical.systems;
+// Section images + PDFs are editable in /admin (slots technical.system.N / technical.pdf.N).
+const systems = t.technical.systems.map((s, i) => ({ ...s, im: img(`technical.system.${i + 1}`), href: doc(`technical.pdf.${i + 1}`) }));
 ---
 
-<PageHero title={t.technical.title} subtitle={t.technical.subtitle} eyebrow={t.nav.technical} image="/img/header.webp" />
+<PageHero title={t.technical.title} subtitle={t.technical.subtitle} eyebrow={t.nav.technical} image={img('hero.technical')} />
 
 <!-- Intro -->
 <section class="section">
@@ -31,7 +33,7 @@ const systems = t.technical.systems;
         systems.map((s) => (
           <article class="group grid gap-6 rounded-2xl bg-white/[0.04] p-6 ring-1 ring-white/10 transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.07] sm:grid-cols-[160px_1fr] reveal">
             <div class="flex items-center justify-center overflow-hidden rounded-xl bg-white p-4">
-              <img src={s.img} alt={`${s.name} ${t.technical.sectionLabel}`} loading="lazy" class="max-h-44 w-auto object-contain transition-transform duration-500 ease-out group-hover:scale-110" />
+              <img src={s.im.src} srcset={s.im.srcset} sizes={s.im.srcset && '160px'} alt={`${s.name} ${t.technical.sectionLabel}`} loading="lazy" class="max-h-44 w-auto object-contain transition-transform duration-500 ease-out group-hover:scale-110" />
             </div>
             <div>
               <h3 class="text-xl font-bold text-white">{s.name}</h3>
@@ -54,7 +56,7 @@ const systems = t.technical.systems;
                   <dd class="text-right font-bold text-accent">{s.ud}</dd>
                 </div>
               </dl>
-              <a href={s.pdf} target="_blank" rel="noopener" class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-accent">
+              <a href={s.href} target="_blank" rel="noopener" class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-accent">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
                 PDF
               </a>

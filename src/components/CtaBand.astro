@@ -2,6 +2,7 @@
 import { useTranslations } from '../i18n/ui';
 import { path } from '../i18n/routes';
 import { company, type Lang } from '../i18n/config';
+import { img } from '../lib/slots';
 
 interface Props {
   lang: Lang;
@@ -9,11 +10,13 @@ interface Props {
 }
 const { lang, variant = 'configurator' } = Astro.props;
 const t = useTranslations(lang);
+const bg = img('cta.bg');
 ---
 
 <section class="relative overflow-hidden bg-ink-900">
   <img
-    src="/img/hero-door-new-2.jpg"
+    src={bg.src}
+    srcset={bg.srcset}
     alt=""
     aria-hidden="true"
     loading="lazy"

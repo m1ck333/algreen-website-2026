@@ -2,6 +2,7 @@
 import { useTranslations } from '../i18n/ui';
 import { routes, altLangPath, type RouteKey } from '../i18n/routes';
 import { company, type Lang } from '../i18n/config';
+import { cms, pick } from '../lib/cms';
 
 interface Props {
   lang: Lang;
@@ -22,6 +23,14 @@ const navItems: { key: RouteKey; label: string }[] = [
 const otherLangHref = altLangPath(routeKey, lang);
 const otherLang: Lang = lang === 'sr' ? 'en' : 'sr';
 const logoHref = routes.home[lang];
+
+// Optional site-wide announcement (admin → Obaveštenje), e.g. holiday hours.
+const ann = cms.announcement?.enabled ? cms.announcement : null;
+const annText = ann ? pick(ann.text, lang) : '';
+const annLabel = ann ? pick(ann.linkLabel, lang) || (lang === 'sr' ? 'Saznajte više' : 'Learn more') : '';
+const annExternal = !!ann?.link && /^https?:/i.test(ann.link);
+// Dismissal is remembered per announcement text.
+const annId = annText ? String([...annText].reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 7)) : '';
 ---
 
 <header
@@ -29,6 +38,25 @@ const logoHref = routes.home[lang];
   class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-ink-900/30 backdrop-blur-md transition-all duration-300"
   data-header
 >
+  {
+    annText && (
+      <div class="bg-accent text-white" data-announcement={annId}>
+        <div class="container-px flex items-center justify-center gap-3 py-2 text-center text-xs sm:text-sm">
+          <p>
+            {annText}
+            {ann?.link && (
+              <a href={ann.link} class="ml-1 font-semibold underline" target={annExternal ? '_blank' : undefined} rel={annExternal ? 'noopener' : undefined}>
+                {annLabel}
+              </a>
+            )}
+          </p>
+          <button type="button" class="shrink-0 text-white/80 hover:text-white" aria-label={lang === 'sr' ? 'Zatvori obaveštenje' : 'Close announcement'} data-announcement-close>
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+      </div>
+    )
+  }
   <div class="container-px flex items-center justify-between py-4">
     <!-- Logo (always the white wordmark — bar is always dark glass) -->
     <a href={logoHref} class="relative z-10 flex items-center" aria-label="Algreen">
@@ -187,4 +215,19 @@ const logoHref = routes.home[lang];
 
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
+  // Announcement bar (only rendered when published from the admin).
+  const ann = document.querySelector('[data-announcement]') as HTMLElement | null;
+  if (ann) {
+    const key = 'algreen-ann-' + ann.dataset.announcement;
+    try {
+      if (localStorage.getItem(key)) ann.remove();
+    } catch {}
+    document.querySelector('[data-announcement-close]')?.addEventListener('click', () => {
+      ann.remove();
+      try {
+        localStorage.setItem(key, '1');
+      } catch {}
+    });
+  }
 </script>

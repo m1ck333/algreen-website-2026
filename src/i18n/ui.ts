@@ -1,4 +1,5 @@
 import type { Lang } from './config';
+import { cms, pick } from '../lib/cms';
 
 /**
  * Full bilingual content dictionary. Copy carried over from the existing
@@ -574,6 +575,42 @@ export const ui = {
 
 export type UI = (typeof ui)['sr'];
 
-export function useTranslations(lang: Lang) {
-  return ui[lang];
+/**
+ * Leaf keys that hold asset paths, not copy. They're managed as image/document
+ * slots in the admin (src/lib/slots.ts), never as text overrides.
+ */
+export const ASSET_KEYS = new Set(['img', 'file', 'pdf']);
+
+/** Set `path` ("a.b.0.c") in a cloned dictionary — only where a string already exists. */
+function setString(root: unknown, path: string, value: string) {
+  const parts = path.split('.');
+  if (ASSET_KEYS.has(parts[parts.length - 1])) return;
+  let node = root as Record<string, unknown>;
+  for (let i = 0; i < parts.length - 1; i++) {
+    const next = node?.[parts[i]];
+    if (!next || typeof next !== 'object') return;
+    node = next as Record<string, unknown>;
+  }
+  const last = parts[parts.length - 1];
+  if (typeof node[last] === 'string' && value.trim()) node[last] = value;
+}
+
+/** Dictionary for a language with the client's published edits (admin) applied. */
+function localize<L extends Lang>(lang: L): (typeof ui)[L] {
+  const overrides = cms.texts?.[lang];
+  if (!overrides && !cms.faq) return ui[lang];
+  const dict = structuredClone(ui[lang]) as (typeof ui)[L];
+  for (const [p, v] of Object.entries(overrides ?? {})) setString(dict, p, String(v));
+  if (cms.faq) {
+    (dict.faq as unknown as { items: { q: string; a: string }[] }).items = cms.faq
+      .map((f) => ({ q: pick(f.q, lang), a: pick(f.a, lang) }))
+      .filter((f) => f.q && f.a);
+  }
+  return dict;
+}
+
+const localized = { sr: localize('sr'), en: localize('en') };
+
+export function useTranslations<L extends Lang>(lang: L): (typeof ui)[L] {
+  return localized[lang];
 }

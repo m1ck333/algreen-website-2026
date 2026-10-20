@@ -1,0 +1,228 @@
+---
+/**
+ * /admin/ — content editor for the client (Monika). Static shell + vanilla TS app
+ * (src/admin/app.ts) talking to the Pages Functions under /api/admin/*.
+ *
+ * NOT part of the public site: noindex (meta + X-Robots-Tag in _headers), robots.txt
+ * Disallow, not in the sitemap, no GTM/analytics, own CSS (Tailwind excludes this
+ * file, so nothing here touches the CSS inlined into public pages).
+ *
+ * The code DEFAULTS (what the site shows when nothing was edited) are embedded as
+ * JSON so the editor can show them and offer "vrati original".
+ */
+import { ui, ASSET_KEYS } from '../../i18n/ui';
+import { defaultCompany } from '../../i18n/config';
+import { SLOTS, DOCS, defaultSrcset } from '../../lib/slots';
+import { DEFAULT_GALLERY } from '../../lib/gallery';
+
+const both = (v: string | { sr: string; en: string }) => (typeof v === 'string' ? { sr: v, en: v } : { sr: v.sr, en: v.en });
+
+// Legacy copy from the pre-2026 homepage that no page renders any more — hidden so
+// edits never "do nothing". (Re-check with a dist grep if the homepage changes.)
+const HIDDEN_TEXT = [
+  'common.learnMore', 'common.readMore', 'common.seeMore', 'common.requestQuote', 'common.followUs', 'common.backToHome',
+  'home.heroCtaPrimary', 'home.heroCtaSecondary', 'home.introHeading', 'home.introP1', 'home.introP2',
+  'home.featuresHeading', 'home.features', 'home.configHeading', 'home.configP1', 'home.configP2', 'home.configP3',
+  'home.systemsHeading', 'home.systemsSubheading', 'home.systemsTab', 'home.catalogHeading', 'home.catalogSubheading',
+  'home.catalogs', 'home.testimonialsHeading', 'home.testimonialsSubheading', 'process', 'statsLabels',
+  // FAQ questions have their own tab.
+  'faq.items',
+];
+const hidden = (p: string) => HIDDEN_TEXT.some((h) => p === h || p.startsWith(h + '.'));
+
+const GROUPS: Record<string, string> = {
+  nav: 'Meni',
+  common: 'Dugmad i zajednički tekstovi',
+  consent: 'Obaveštenje o kolačićima',
+  home: 'Početna',
+  faq: 'Česta pitanja — naslov',
+  about: 'O nama',
+  equipment: 'Oprema',
+  technical: 'Tehnički detalji',
+  works: 'Naši radovi',
+  contact: 'Kontakt',
+};
+
+type Entry = { path: string; group: string; sr: string; en: string };
+const texts: Entry[] = [];
+const walk = (sr: unknown, en: unknown, p: string) => {
+  if (typeof sr === 'string') {
+    const last = p.split('.').pop()!;
+    if (!ASSET_KEYS.has(last) && !hidden(p)) {
+      texts.push({ path: p, group: GROUPS[p.split('.')[0]] ?? p.split('.')[0], sr, en: typeof en === 'string' ? en : '' });
+    }
+    return;
+  }
+  if (sr && typeof sr === 'object') {
+    for (const k of Object.keys(sr)) walk((sr as any)[k], (en as any)?.[k], p ? `${p}.${k}` : k);
+  }
+};
+walk(ui.sr, ui.en, '');
+
+const defaults = {
+  slots: SLOTS.map((s) => ({ key: s.key, group: s.group, label: s.label, src: s.src, preview: defaultSrcset(s.src, s.variants)?.split(' ')[0] ?? s.src })),
+  docs: DOCS,
+  gallery: DEFAULT_GALLERY.map((g, i) => ({ id: `d${i + 1}`, src: g.src!, preview: g.src!.replace(/\.webp$/, '-600.webp') })),
+  faq: ui.sr.faq.items.map((f, i) => ({ q: { sr: f.q, en: ui.en.faq.items[i]?.q ?? '' }, a: { sr: f.a, en: ui.en.faq.items[i]?.a ?? '' } })),
+  settings: {
+    email: defaultCompany.email,
+    facebook: defaultCompany.socials.facebook,
+    instagram: defaultCompany.socials.instagram,
+    whatsapp: defaultCompany.branches[0].phones[1],
+    branches: defaultCompany.branches.map((b) => ({
+      id: b.id,
+      city: both(b.city),
+      street: both(b.street),
+      postal: both(b.postal),
+      phones: [...b.phones],
+      email: b.email,
+      mapsUrl: b.mapsUrl,
+    })),
+  },
+  texts,
+};
+---
+
+<!doctype html>
+<html lang="sr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="light" />
+    <title>Algreen — uređivanje sajta</title>
+    <link rel="icon" href="/img/favicon.png" />
+    <script type="application/json" id="admin-defaults" set:html={JSON.stringify(defaults).replace(/</g, '\\u003c')} />
+  </head>
+  <body>
+    <div id="app">
+      <p class="boot">Učitavanje…</p>
+    </div>
+    <noscript>Za uređivanje sajta potreban je JavaScript.</noscript>
+    <script>
+      import '../../admin/app.ts';
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg: #f4f4f2;
+    --card: #ffffff;
+    --ink: #1f1c1c;
+    --muted: #6b6767;
+    --line: #e2e0dd;
+    --accent: #e01f26;
+    --accent-d: #b8161c;
+    --ok: #1d7a3a;
+    --warn: #a15c00;
+    --radius: 12px;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); font-size: 15px; line-height: 1.45; }
+  button, input, textarea, select { font: inherit; color: inherit; }
+  a { color: var(--accent-d); }
+  .boot { padding: 40px; text-align: center; color: var(--muted); }
+
+  /* Top bar */
+  .top { position: sticky; top: 0; z-index: 20; background: #161313; color: #fff; }
+  .top-in { max-width: 1180px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .top img { height: 26px; }
+  .top .who { font-size: 13px; opacity: .7; margin-left: auto; }
+  .tabs { max-width: 1180px; margin: 0 auto; padding: 0 8px; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+  .tabs button { background: none; border: 0; color: #fff; opacity: .7; padding: 10px 12px; border-bottom: 3px solid transparent; white-space: nowrap; cursor: pointer; }
+  .tabs button[aria-selected='true'] { opacity: 1; border-color: var(--accent); font-weight: 600; }
+  .tabs button .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #f5a623; margin-left: 6px; vertical-align: middle; }
+
+  main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 120px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 17px; margin: 28px 0 10px; }
+  .lead { color: var(--muted); margin: 0 0 18px; max-width: 760px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+  .stack > * + * { margin-top: 12px; }
+  .muted { color: var(--muted); font-size: 13px; }
+  .badge { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 99px; background: #eee; color: var(--muted); }
+  .badge.on { background: #fde8e8; color: var(--accent-d); }
+  .badge.ok { background: #e3f3e8; color: var(--ok); }
+
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  input[type='text'], input[type='email'], input[type='url'], input[type='password'], input[type='search'], textarea {
+    width: 100%; padding: 9px 11px; border: 1px solid #cfccc8; border-radius: 8px; background: #fff;
+  }
+  textarea { min-height: 64px; resize: vertical; }
+  input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
+  .two { display: grid; gap: 10px; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { .two { grid-template-columns: 1fr 1fr; } }
+  .lang { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .06em; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #cfccc8; background: #fff; border-radius: 8px; padding: 8px 14px; cursor: pointer; font-weight: 600; font-size: 14px; text-decoration: none; color: var(--ink); min-height: 38px; }
+  .btn:hover { border-color: var(--ink); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-d); }
+  .btn.ghost { background: transparent; border-color: rgba(255,255,255,.4); color: #fff; }
+  .btn.small { padding: 4px 9px; min-height: 30px; font-size: 13px; }
+  .btn.icon { padding: 4px; min-width: 32px; min-height: 32px; }
+  .btn.danger { color: var(--accent-d); }
+  .btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+  /* Gallery */
+  .gal { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  .gi { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+  .gi.drag { opacity: .4; }
+  .gi.over { outline: 3px dashed var(--accent); }
+  .gi.hid .thumb img { opacity: .35; }
+  .thumb { position: relative; aspect-ratio: 4 / 3; background: #ddd; cursor: grab; overflow: hidden; }
+  .thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb .n { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,.65); color: #fff; font-size: 12px; font-weight: 700; padding: 1px 7px; border-radius: 99px; }
+  .thumb .h { position: absolute; top: 6px; right: 6px; background: #fff; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 99px; }
+  .gi .body { padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .gi .body input { padding: 6px 8px; font-size: 13px; }
+  .gi .tools { display: flex; gap: 4px; flex-wrap: wrap; }
+
+  .drop { border: 2px dashed #c9c6c2; border-radius: var(--radius); padding: 18px; text-align: center; background: #fbfbfa; }
+  .drop.over { border-color: var(--accent); background: #fff5f5; }
+
+  /* Slots */
+  .slot { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .slot .pic { position: relative; aspect-ratio: 4 / 3; background: #e9e7e4; overflow: hidden; }
+  .slot .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
+  .slot .body { padding: 10px; }
+  .slot .name { font-weight: 600; font-size: 14px; }
+
+  /* Texts */
+  .txt { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; }
+  .txt .path { font-size: 12px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+  .txt.mod { border-color: #f0b4b6; box-shadow: inset 3px 0 0 var(--accent); }
+
+  /* Bottom save bar */
+  .savebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: #fff; border-top: 1px solid var(--line); box-shadow: 0 -6px 20px rgba(0,0,0,.08); transform: translateY(110%); transition: transform .2s; }
+  .savebar.show { transform: none; }
+  .savebar .in { max-width: 1180px; margin: 0 auto; padding: 12px 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+  .toast { position: fixed; left: 50%; top: 16px; transform: translateX(-50%); z-index: 50; background: #161313; color: #fff; padding: 10px 16px; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,.3); max-width: calc(100vw - 32px); }
+  .toast.err { background: var(--accent-d); }
+
+  .progress { height: 6px; background: #eee; border-radius: 99px; overflow: hidden; }
+  .progress > div { height: 100%; background: var(--accent); width: 0; transition: width .2s; }
+
+  .login { max-width: 380px; margin: 10vh auto; padding: 0 16px; }
+  .login img { height: 34px; display: block; margin: 0 auto 18px; }
+  .pub { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .pub .st { font-size: 13px; }
+  .hint { background: #fff8e6; border: 1px solid #f3dca5; border-radius: 10px; padding: 10px 12px; font-size: 13px; }
+  details.en > summary { cursor: pointer; font-size: 12px; color: var(--muted); }
+  @media (max-width: 560px) {
+    .gal { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .gi .body { padding: 8px; }
+    .gi .tools .btn.small { padding: 4px 7px; font-size: 12px; }
+    .grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .top .who { display: none; }
+    h1 { font-size: 20px; }
+  }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>

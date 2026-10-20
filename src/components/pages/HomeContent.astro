@@ -2,6 +2,7 @@
 import { useTranslations } from '../../i18n/ui';
 import { path } from '../../i18n/routes';
 import { company, type Lang } from '../../i18n/config';
+import { img, doc } from '../../lib/slots';
 import CtaBand from '../CtaBand.astro';
 import FaqSection from '../FaqSection.astro';
 
@@ -12,35 +13,29 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const s = t.home.showcase;
 
-// Responsive images: pair a 500px mobile variant with the 1000px base so mobile
-// downloads ~18KB instead of ~47KB per image. All design images have a -500.webp.
-const srcset = (src: string) => `${src.replace(/\.webp$/, '-500.webp')} 500w, ${src} 1000w`;
+// Images come from the slot registry (src/lib/slots.ts): the client's replacement
+// from /admin if published, else the built-in design image (+ its -500.webp variant).
 
 // Full-bleed hero mosaic (2×2 on mobile, 4-across on desktop).
-const heroImages = [
-  { src: '/img/design/hero-house.webp', alt: 'Algreen — moderna kuća sa aluminijumskim ulaznim vratima' },
-  { src: '/img/design/hero-door.webp', alt: 'Algreen — ekskluzivna ulazna vrata' },
-  { src: '/img/design/hero-pivot.webp', alt: 'Algreen — pivot ulazna vrata' },
-  { src: '/img/design/access-control.webp', alt: 'Algreen — kontrola pristupa' },
+const heroAlts = [
+  'Algreen — moderna kuća sa aluminijumskim ulaznim vratima',
+  'Algreen — ekskluzivna ulazna vrata',
+  'Algreen — pivot ulazna vrata',
+  'Algreen — kontrola pristupa',
 ];
+const heroImages = heroAlts.map((alt, i) => ({ ...img(`home.hero.${i + 1}`), alt }));
+const configImg = img('home.configurator');
 
 // Destinations for the four "exclusive doors" tiles (order matches s.tiles).
 const tileHrefs = [
-  '/files/Katalog ulaznih vrata 2024.pdf',
+  doc('catalog'),
   path('equipment', lang),
   path('equipment', lang),
   path('technical', lang),
 ];
 
-// Works gallery — door photography from the 2026 design set.
-const works = [
-  '/img/design/work-1.webp',
-  '/img/design/hero-door.webp',
-  '/img/design/work-2.webp',
-  '/img/design/work-3.webp',
-  '/img/design/work-4.webp',
-  '/img/design/work-5.webp',
-];
+// Works teaser — six door photos (editable in /admin → Slike sajta).
+const works = [1, 2, 3, 4, 5, 6].map((i) => img(`home.work.${i}`));
 ---
 
 <!-- HERO — full-bleed photo mosaic with the wordmark -->
@@ -50,7 +45,7 @@ const works = [
       heroImages.map((img, i) => (
         <img
           src={img.src}
-          srcset={srcset(img.src)}
+          srcset={img.srcset}
           sizes="(min-width: 1024px) 25vw, 50vw"
           alt={img.alt}
           width="1000"
@@ -101,8 +96,8 @@ const works = [
     </div>
     <div class="reveal" data-delay="2">
       <img
-        src="/img/design/configurator.webp"
-        srcset={srcset('/img/design/configurator.webp')}
+        src={configImg.src}
+        srcset={configImg.srcset}
         sizes="(min-width: 1024px) 45vw, 100vw"
         alt={s.configHeading}
         loading="lazy"
@@ -122,7 +117,9 @@ const works = [
   </div>
   <div class="grid grid-cols-2 gap-1 lg:grid-cols-4">
     {
-      s.tiles.map((tile, i) => (
+      s.tiles.map((tile, i) => {
+        const im = img(`home.tile.${i + 1}`);
+        return (
         <a
           href={tileHrefs[i]}
           target={tileHrefs[i].endsWith('.pdf') ? '_blank' : undefined}
@@ -130,10 +127,11 @@ const works = [
           class="group mosaic-tile aspect-[4/5] reveal"
           data-delay={String((i % 4) + 1)}
         >
-          <img src={tile.img} srcset={srcset(tile.img)} sizes="(min-width: 1024px) 25vw, 50vw" alt="" loading="lazy" width="700" height="875" />
+          <img src={im.src} srcset={im.srcset} sizes="(min-width: 1024px) 25vw, 50vw" alt="" loading="lazy" width="700" height="875" />
           <span class="mosaic-label">{tile.label}</span>
         </a>
-      ))
+        );
+      })
     }
   </div>
 </section>
@@ -151,12 +149,15 @@ const works = [
 <section class="bg-ink-900">
   <div class="grid grid-cols-2 gap-1 lg:grid-cols-3">
     {
-      s.products.map((p, i) => (
+      s.products.map((p, i) => {
+        const im = img(`home.product.${i + 1}`);
+        return (
         <figure class="group mosaic-tile aspect-[4/5] reveal" data-delay={String((i % 3) + 1)}>
-          <img src={p.img} srcset={srcset(p.img)} sizes="(min-width: 1024px) 33vw, 50vw" alt="" loading="lazy" width="700" height="875" />
+          <img src={im.src} srcset={im.srcset} sizes="(min-width: 1024px) 33vw, 50vw" alt="" loading="lazy" width="700" height="875" />
           <figcaption class="mosaic-label">{p.label}</figcaption>
         </figure>
-      ))
+        );
+      })
     }
   </div>
 </section>
@@ -169,9 +170,9 @@ const works = [
   </div>
   <div class="grid grid-cols-2 gap-1 lg:grid-cols-3">
     {
-      works.map((src, i) => (
+      works.map((w, i) => (
         <figure class="group mosaic-tile aspect-[3/4] reveal" data-delay={String((i % 3) + 1)}>
-          <img src={src} srcset={srcset(src)} sizes="(min-width: 1024px) 33vw, 50vw" alt="Algreen — realizovani projekat" loading="lazy" width="700" height="933" />
+          <img src={w.src} srcset={w.srcset} sizes="(min-width: 1024px) 33vw, 50vw" alt="Algreen — realizovani projekat" loading="lazy" width="700" height="933" />
         </figure>
       ))
     }

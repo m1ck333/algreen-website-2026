@@ -6,3 +6,13 @@
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
   Strict-Transport-Security: max-age=31536000
+
+# Content editor (Monika) — never indexed, never cached by the browser.
+/admin/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+# Images/PDFs published from the admin: file names include a random id that never
+# changes for the same content → safe to cache forever.
+/m/*
+  Cache-Control: public, max-age=31536000, immutable

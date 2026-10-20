@@ -21,7 +21,7 @@ const navItems: { key: RouteKey; label: string }[] = [
 const txt = (v: string | Record<Lang, string>) => (typeof v === 'string' ? v : v[lang]);
 
 // WhatsApp — built from the first branch's mobile number (digits only).
-const whatsapp = 'https://wa.me/' + company.branches[0].phones[1].replace(/[^\d]/g, '');
+const whatsapp = 'https://wa.me/' + company.whatsapp.replace(/[^\d]/g, '');
 ---
 
 <footer class="bg-ink-900 text-white/80">

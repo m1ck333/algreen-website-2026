@@ -21,3 +21,8 @@ node_modules/
 # logs
 npm-debug.log*
 .vercel
+
+# CMS content pulled at build time (scripts/fetch-content.mjs) — never committed
+src/data/cms.generated.json
+public/m/
+.cms-cache/

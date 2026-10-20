@@ -27,6 +27,8 @@ jobs:
           check "https://www.algreen.rs/"          "200"
           check "https://algreen.rs/kontakt/"      "200"
           check "https://algreen.rs/sitemap.xml"   "200"
+          # CMS content API (admin). 503 here = D1 binding missing → deploys would fail.
+          check "https://algreen.rs/api/content"   "200"
           check "https://internal.algreen.rs/"     "200 301 302"
           check "https://konfigurator.algreen.rs/" "200"
           exit $fail

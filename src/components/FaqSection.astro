@@ -2,6 +2,7 @@
 import { useTranslations } from '../i18n/ui';
 import { path } from '../i18n/routes';
 import { type Lang } from '../i18n/config';
+import { jsonLd } from '../lib/cms';
 
 interface Props {
   lang: Lang;
@@ -21,6 +22,7 @@ const faqSchema = {
 };
 ---
 
+{t.faq.items.length > 0 && (
 <section class="bg-ink-800 py-20 sm:py-28">
   <div class="container-px">
     <div class="mx-auto max-w-2xl text-center reveal">
@@ -49,5 +51,6 @@ const faqSchema = {
     </div>
   </div>
 
-  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script type="application/ld+json" set:html={jsonLd(faqSchema)} />
 </section>
+)}
