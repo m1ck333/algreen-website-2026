@@ -15,7 +15,7 @@ interface Props {
   title: string;
   description: string;
   ogImage?: string;
-  /** Extra JSON-LD object(s) to embed (e.g. ItemList of products). */
+  /** Extra JSON-LD object(s) to embed on this page. */
   extraSchema?: object | object[];
   /** Above-the-fold image(s) to <link rel="preload"> (e.g. the home hero LCP image). */
   preloadImages?: { href: string; imagesrcset?: string; imagesizes?: string }[];
