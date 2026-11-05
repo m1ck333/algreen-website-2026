@@ -69,7 +69,8 @@ CLOUDFLARE_API_TOKEN="$(cat ~/.jamogu-cf-token)" \
 ## Admin CMS (`/admin`) — client edits content herself
 
 Full details + go-live checklist: **`docs/ADMIN-SETUP.md`**. Client guide (Serbian):
-`docs/UPUTSTVO-ZA-MONIKU.md`. Built on branch `feature/admin-cms`.
+`docs/UPUTSTVO-ZA-MONIKU.md`. **Live since 2026-11-05** at https://algreen.rs/admin/ (users `monika`, `milos`;
+D1 `algreen-cms` + R2 `algreen-media`, bindings in `wrangler.toml`). Reset a password: `npm run admin:user -- monika "Monika" --remote`.
 
 - **Build-time content, never client-side** (SEO): drafts in **D1**, uploads in **R2**, edited via
   Pages Functions `functions/api/admin/*` (auth in `functions/_lib/auth.js`). "Objavi na sajt"

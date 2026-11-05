@@ -23,18 +23,14 @@ CONTACT_FROM = "upit@algreen.rs"
 CONTACT_TO = "info@algreen.rs"
 
 # ---------------------------------------------------------------------------
-# Admin CMS (/admin) — see docs/ADMIN-SETUP.md. Uncomment ONLY after creating the
-# resources (a binding to a missing D1/R2 makes the deploy fail):
-#   npx wrangler d1 create algreen-cms          → paste database_id below
-#   npx wrangler r2 bucket create algreen-media
+# Admin CMS (/admin) — see docs/ADMIN-SETUP.md. Drafts/users in D1, uploads in R2.
 # Secrets (not here):  wrangler pages secret put SESSION_SECRET / GITHUB_TOKEN
-#
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "algreen-cms"
-# database_id = "<from wrangler d1 create>"
-# migrations_dir = "migrations"
-#
-# [[r2_buckets]]
-# binding = "MEDIA"
-# bucket_name = "algreen-media"
+[[d1_databases]]
+binding = "DB"
+database_name = "algreen-cms"
+database_id = "52ea9b6c-7554-4d15-9173-61a73db573d3"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "algreen-media"
