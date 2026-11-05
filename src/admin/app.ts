@@ -533,7 +533,7 @@ function renderShell() {
         h(
           'div',
           { class: 'me' },
-          h('button', { type: 'button', class: 'btn ghost small', 'data-tab': 'help', title: 'Pomoć', 'aria-label': 'Pomoć', onclick: () => go('help') }, '?'),
+          h('button', { type: 'button', class: 'btn ghost small', 'data-tab': 'help', title: 'Uputstvo za korišćenje', onclick: () => go('help') }, '? Pomoć'),
           h(
             'button',
             { type: 'button', class: 'btn ghost small', 'data-tab': 'account', title: 'Nalog (lozinka, odjava)', onclick: () => go('account') },
@@ -767,9 +767,13 @@ function viewGallery(): Node[] {
         h(
           'div',
           { class: 'tools' },
-          h('button', { type: 'button', class: 'btn icon small', title: 'Pomeri levo / gore', 'aria-label': 'Pomeri unazad', onclick: () => move(i, i - 1), disabled: i === 0 }, '←'),
-          h('button', { type: 'button', class: 'btn icon small', title: 'Pomeri desno / dole', 'aria-label': 'Pomeri unapred', onclick: () => move(i, i + 1), disabled: i === items.length - 1 }, '→'),
-          h('span', { class: 'sp' }),
+          h('span', { class: 'lbl' }, 'Pomeri sliku:'),
+          h('button', { type: 'button', class: 'btn icon small', title: 'Pomeri sliku jedno mesto unazad (ranije u galeriji)', 'aria-label': 'Pomeri sliku unazad', onclick: () => move(i, i - 1), disabled: i === 0 }, '←'),
+          h('button', { type: 'button', class: 'btn icon small', title: 'Pomeri sliku jedno mesto unapred (kasnije u galeriji)', 'aria-label': 'Pomeri sliku unapred', onclick: () => move(i, i + 1), disabled: i === items.length - 1 }, '→'),
+        ),
+        h(
+          'div',
+          { class: 'tools' },
           h(
             'button',
             {
@@ -788,9 +792,8 @@ function viewGallery(): Node[] {
             'button',
             {
               type: 'button',
-              class: 'btn icon small danger',
-              title: 'Obriši iz galerije',
-              'aria-label': 'Obriši iz galerije',
+              class: 'btn small danger',
+              title: 'Trajno ukloni sliku iz galerije',
               onclick: async () => {
                 const ok = await ask({
                   title: 'Obrisati ovu fotografiju?',
@@ -805,7 +808,7 @@ function viewGallery(): Node[] {
                 renderView();
               },
             },
-            '🗑',
+            'Obriši',
           ),
         ),
       ),
@@ -818,7 +821,7 @@ function viewGallery(): Node[] {
     h(
       'p',
       { class: 'lead' },
-      'Fotografije sa stranice „Naši radovi”. Redosled menjate prevlačenjem slika (ili strelicama). Opis slike se prikazuje kada posetilac otvori sliku i pomaže da vas Google pronađe.',
+      'Fotografije sa stranice „Naši radovi”, istim redom kao na sajtu. Redosled menjate prevlačenjem slike mišem ili dugmićima „Pomeri sliku ← →”. Opis slike se prikazuje kada posetilac otvori sliku i pomaže da vas Google pronađe.',
     ),
     drop,
     h(
@@ -1072,8 +1075,8 @@ function viewFaq(): Node[] {
             { class: 'row' },
             h('strong', {}, `Pitanje ${i + 1}`),
             h('span', { style: 'flex:1' }),
-            h('button', { type: 'button', class: 'btn icon small', 'aria-label': 'Gore', onclick: () => move(i, i - 1), disabled: i === 0 }, '↑'),
-            h('button', { type: 'button', class: 'btn icon small', 'aria-label': 'Dole', onclick: () => move(i, i + 1), disabled: i === items.length - 1 }, '↓'),
+            h('button', { type: 'button', class: 'btn small', title: 'Pomeri pitanje jedno mesto gore', onclick: () => move(i, i - 1), disabled: i === 0 }, '↑ Gore'),
+            h('button', { type: 'button', class: 'btn small', title: 'Pomeri pitanje jedno mesto dole', onclick: () => move(i, i + 1), disabled: i === items.length - 1 }, '↓ Dole'),
             h(
               'button',
               {
@@ -1369,7 +1372,7 @@ function viewHelp(): Node[] {
         'ul',
         {},
         li('Najbolje su JPG fotografije sa telefona ili fotoaparata — ne morate ih smanjivati, to radimo automatski.'),
-        li('„Sakrij” privremeno sklanja sliku sa sajta (možete je vratiti). Kanta 🗑 je trajno uklanja iz galerije.'),
+        li('„Sakrij” privremeno sklanja sliku sa sajta (možete je vratiti). „Obriši” je trajno uklanja iz galerije.'),
         li('Dodajte kratak opis slike (npr. „Ulazna vrata EXCLUSIVE AG 77, Niš”) — pomaže da vas ljudi pronađu na Google-u.'),
       ),
       h('h2', {}, 'Vraćanje na staro'),

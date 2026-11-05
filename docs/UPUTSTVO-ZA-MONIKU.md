@@ -27,7 +27,7 @@ Ako posle 5 minuta ne vidite promenu, osvežite stranicu (na telefonu povucite n
 - Slike sa telefona su sasvim u redu — **ne morate ih smanjivati**, sajt to radi sam.
 - Za „Slike sajta” izaberite sliku **sličnog oblika** kao trenutna (položena ili uspravna).
 - Dodajte **kratak opis** slike u galeriji (npr. „Ulazna vrata EXCLUSIVE AG 77, Niš”). Opis se vidi kada se slika otvori i pomaže da vas ljudi pronađu na Google-u.
-- **„Sakrij”** privremeno sklanja sliku (možete je vratiti), **kanta 🗑** je uklanja iz galerije.
+- **„Sakrij”** privremeno sklanja sliku (možete je vratiti), **„Obriši”** je uklanja iz galerije. Dugmići **„Pomeri sliku ← →”** pomeraju sliku jedno mesto unazad/unapred (isto kao prevlačenje).
 
 ## Ne brinite da ćete nešto „pokvariti”
 
