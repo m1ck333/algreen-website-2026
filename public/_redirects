@@ -24,3 +24,10 @@
 /assets/EXCLUSIVE%20AG%2077.pdf  /files/EXCLUSIVE%20AG%2077.pdf  301
 /assets/PREMIUM%20AG%2085.pdf    /files/PREMIUM%20AG%2085.pdf    301
 /assets/STANDARD%20AG%2070.pdf   /files/STANDARD%20AG%2070.pdf   301
+
+# Older catalog file names still in Google's index (GSC "Not found (404)")
+/files/2_STANDARD_AG_70.pdf      /files/STANDARD%20AG%2070.pdf   301
+/files/ravanrukohvat.pdf         /files/Katalog%20Rukohvata.pdf  301
+/files/Katalog%20ekskluzivnih%20ulaznih%20vrata.pdf                       /files/Katalog%20ulaznih%20vrata%202024.pdf  301
+/files/algreen_katalog_ekskluzivnih_ulaznih_vrata_v2.150dpi.pdf           /files/Katalog%20ulaznih%20vrata%202024.pdf  301
+/files/algreen_katalog_ekskluzivnih_ulaznih_vrata_v2.300dpi.pdf           /files/Katalog%20ulaznih%20vrata%202024.pdf  301
