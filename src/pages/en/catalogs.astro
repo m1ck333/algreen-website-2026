@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CatalogsContent from '../../components/pages/CatalogsContent.astro';
+import { useTranslations } from '../../i18n/ui';
+const lang = 'en' as const;
+const t = useTranslations(lang);
+---
+
+<BaseLayout lang={lang} routeKey="catalogs" title={t.catalogs.metaTitle} description={t.catalogs.metaDescription}>
+  <CatalogsContent lang={lang} />
+</BaseLayout>

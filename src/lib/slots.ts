@@ -65,6 +65,7 @@ export const SLOTS: SlotDef[] = [
   { key: 'hero.works', group: 'Naslovne slike stranica', label: 'Naši radovi', src: '/img/19.webp', variants: 'hero' },
   { key: 'hero.equipment', group: 'Naslovne slike stranica', label: 'Oprema', src: '/img/header.webp', variants: 'hero' },
   { key: 'hero.technical', group: 'Naslovne slike stranica', label: 'Tehnički detalji', src: '/img/header.webp', variants: 'hero' },
+  { key: 'hero.catalogs', group: 'Naslovne slike stranica', label: 'Katalozi', src: '/img/header.webp', variants: 'hero' },
   { key: 'hero.contact', group: 'Naslovne slike stranica', label: 'Kontakt', src: '/img/kontakt.webp', variants: 'hero' },
   { key: 'cta.bg', group: 'Naslovne slike stranica', label: 'Pozadina trake „Spremni za vrata po Vašoj meri?”', src: '/img/hero-door-new-2.jpg' },
 
@@ -76,6 +77,8 @@ export const SLOTS: SlotDef[] = [
     key: `about.team.${n(i)}`, group: 'O nama — tim', label: sr.about.team[i].title, src,
   })),
 
+  { key: 'about.main.bg', group: 'O nama — pozadine', label: 'Pozadina sekcije „Umetnost dizajna i izrade ulaznih vrata”', src: '/img/design/work-1.webp', variants: 'design' },
+
   // Oprema
   ...sr.equipment.categories.map((c, i) => ({ key: `equipment.category.${n(i)}`, group: 'Oprema — kategorije', label: c.title, src: c.img })),
   ...['/img/rukohvat1.png', '/img/rukohvat2.png', '/img/rukohvat3.png', '/img/kvaka1.png', '/img/kvaka2.png', '/img/kvaka3.png'].map((src, i) => ({
@@ -84,15 +87,14 @@ export const SLOTS: SlotDef[] = [
   ...['/img/brava5.png', '/img/brava6.png', '/img/brava7.png', '/img/cilindar1.png', '/img/sarke1.png', '/img/rozeta1.png'].map((src, i) => ({
     key: `equipment.lock.${n(i)}`, group: 'Oprema — traka „Bezbednost”', label: `Slika ${n(i)}`, src,
   })),
-  { key: 'equipment.fingerprint', group: 'Oprema — ostalo', label: 'Pametna kontrola pristupa', src: '/img/fingerprint2.png' },
-  { key: 'equipment.mailbox', group: 'Oprema — ostalo', label: 'Poštansko sanduče', src: '/img/sanduce.jpg' },
+  { key: 'equipment.fingerprint', group: 'Oprema — pozadine', label: 'Pozadina sekcije „Pametna kontrola pristupa”', src: '/img/design/access-control.webp', variants: 'design' },
+  { key: 'equipment.mailbox', group: 'Oprema — pozadine', label: 'Pozadina sekcije „Poštansko sanduče”', src: '/img/sanduce.jpg' },
 
   // Tehnički detalji
   ...sr.technical.systems.map((s, i) => ({ key: `technical.system.${n(i)}`, group: 'Tehnički detalji — preseci', label: s.name, src: s.img })),
 ];
 
 export const DOCS: DocDef[] = [
-  { key: 'catalog', group: 'Katalozi', label: 'Katalog ulaznih vrata (pločica „Katalog” na početnoj)', href: '/files/Katalog ulaznih vrata 2024.pdf' },
   ...sr.technical.systems.map((s, i) => ({ key: `technical.pdf.${n(i)}`, group: 'Tehnički detalji — PDF', label: s.name, href: s.pdf })),
 ];
 

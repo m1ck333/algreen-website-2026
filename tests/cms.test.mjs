@@ -251,6 +251,49 @@ test('publish: snapshot (hidden dropped, media meta), GitHub dispatch, rollback 
   assert.equal(after.gallery.length, 2, 'live snapshot unchanged');
 });
 
+test('catalogs: validation, incomplete drafts kept but left out of the snapshot', async (t) => {
+  const env = await setup({ GITHUB_TOKEN: 'ghp_test' });
+  const c = await loggedIn(env);
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response(null, { status: 204 });
+  t.after(() => (globalThis.fetch = realFetch));
+
+  const img = (await upload(c, await jpeg())).data.media;
+  const pdf = (await upload(c, Buffer.from('%PDF-1.4\n%%EOF\n'), 'Novi katalog.pdf', 'application/pdf')).data.media;
+  const L = (sr, en = '') => ({ sr, en });
+
+  // An image id used as the PDF → rejected; foreign paths are dropped.
+  const bad = await c.call('PUT', '/api/admin/section/catalogs', { base: 0, data: [{ id: 'x', title: L('X'), pdf: img.id }] });
+  assert.equal(bad.status, 400);
+  const sneaky = await c.call('PUT', '/api/admin/section/catalogs', {
+    base: 0,
+    data: [{ id: 'x', title: L('X'), src: 'https://evil.example/a.png', href: '/files/../secret.pdf' }],
+  });
+  assert.equal(sneaky.status, 200);
+  assert.equal(sneaky.data.data[0].src, undefined);
+  assert.equal(sneaky.data.data[0].href, undefined);
+
+  const r = await c.call('PUT', '/api/admin/section/catalogs', {
+    base: sneaky.data.updatedAt,
+    data: [
+      { id: 'n', title: L('Novi katalog', 'New catalog'), text: L('Opis'), cover: img.id, pdf: pdf.id },
+      { id: 'd1', title: L('Ekskluzivna ulazna vrata'), src: '/img/katalog1.png', href: '/files/Katalog ulaznih vrata 2024.pdf' },
+      { id: 'draft', title: L('Bez PDF-a') },
+    ],
+  });
+  assert.equal(r.status, 200, JSON.stringify(r.data));
+  assert.equal(r.data.data.length, 3, 'incomplete draft kept for editing');
+
+  assert.equal((await c.call('POST', '/api/admin/publish')).status, 200);
+  const snap = await (await dispatch(new Request('https://algreen.rs/api/content'), env)).json();
+  assert.deepEqual(snap.catalogs, [
+    { title: L('Novi katalog', 'New catalog'), text: L('Opis'), cover: img.id, pdf: pdf.id },
+    { title: L('Ekskluzivna ulazna vrata'), text: L(''), src: '/img/katalog1.png', href: '/files/Katalog ulaznih vrata 2024.pdf' },
+  ]);
+  assert.equal(snap.media[img.id].kind, 'image');
+  assert.equal(snap.media[pdf.id].kind, 'pdf');
+});
+
 test('content API: missing DB binding is a hard error (never "empty")', async () => {
   const r = await dispatch(new Request('https://algreen.rs/api/content'), { MEDIA: new FakeR2() });
   assert.equal(r.status, 503);

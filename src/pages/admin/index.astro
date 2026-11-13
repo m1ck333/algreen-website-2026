@@ -23,10 +23,10 @@ const HIDDEN_TEXT = [
   'common.learnMore', 'common.readMore', 'common.seeMore', 'common.requestQuote', 'common.followUs', 'common.backToHome',
   'home.heroCtaPrimary', 'home.heroCtaSecondary', 'home.introHeading', 'home.introP1', 'home.introP2',
   'home.featuresHeading', 'home.features', 'home.configHeading', 'home.configP1', 'home.configP2', 'home.configP3',
-  'home.systemsHeading', 'home.systemsSubheading', 'home.systemsTab', 'home.catalogHeading', 'home.catalogSubheading',
-  'home.catalogs', 'home.testimonialsHeading', 'home.testimonialsSubheading', 'process', 'statsLabels',
-  // FAQ questions have their own tab.
-  'faq.items',
+  'home.systemsHeading', 'home.systemsSubheading', 'home.systemsTab',
+  'home.testimonialsHeading', 'home.testimonialsSubheading', 'process', 'statsLabels',
+  // FAQ questions and catalogs have their own tabs.
+  'faq.items', 'catalogs.items',
 ];
 const hidden = (p: string) => HIDDEN_TEXT.some((h) => p === h || p.startsWith(h + '.'));
 
@@ -39,6 +39,7 @@ const GROUPS: Record<string, string> = {
   about: 'O nama',
   equipment: 'Oprema',
   technical: 'Tehnički detalji',
+  catalogs: 'Katalozi',
   works: 'Naši radovi',
   contact: 'Kontakt',
 };
@@ -63,6 +64,13 @@ const defaults = {
   slots: SLOTS.map((s) => ({ key: s.key, group: s.group, label: s.label, src: s.src, preview: defaultSrcset(s.src, s.variants)?.split(' ')[0] ?? s.src })),
   docs: DOCS,
   gallery: DEFAULT_GALLERY.map((g, i) => ({ id: `d${i + 1}`, src: g.src!, preview: g.src!.replace(/\.webp$/, '-600.webp') })),
+  catalogs: ui.sr.catalogs.items.map((c, i) => ({
+    id: `d${i + 1}`,
+    title: { sr: c.title, en: ui.en.catalogs.items[i]?.title ?? '' },
+    text: { sr: c.text, en: ui.en.catalogs.items[i]?.text ?? '' },
+    src: c.img,
+    href: c.file,
+  })),
   faq: ui.sr.faq.items.map((f, i) => ({ q: { sr: f.q, en: ui.en.faq.items[i]?.q ?? '' }, a: { sr: f.a, en: ui.en.faq.items[i]?.a ?? '' } })),
   settings: {
     email: defaultCompany.email,
@@ -207,6 +215,10 @@ const defaults = {
   .slot .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
   .slot .body { padding: 10px; }
   .slot .name { font-weight: 600; font-size: 14px; }
+  .cat { display: grid; grid-template-columns: 180px 1fr; gap: 16px; align-items: start; }
+  .cat-pic { aspect-ratio: 1; background: #e9e7e4; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .cat-pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  @media (max-width: 640px) { .cat { grid-template-columns: 1fr; } .cat-pic { max-width: 220px; } }
 
   /* Texts */
   .txt { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; }

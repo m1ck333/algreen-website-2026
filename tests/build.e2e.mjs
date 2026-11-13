@@ -42,8 +42,13 @@ await put('gallery', [
   { id: 'd1', src: '/img/1.webp', caption: { sr: '', en: '' } },
   { id: 'd2', src: '/img/2.webp', caption: { sr: '', en: '' }, hidden: true },
 ]);
-await put('slots', { 'home.hero.1': photo, 'equipment.handle.1': cutout });
-await put('docs', { catalog: pdf });
+await put('slots', { 'home.hero.1': photo, 'equipment.handle.1': cutout, 'about.main.bg': photo });
+await put('docs', { 'technical.pdf.1': pdf });
+await put('catalogs', [
+  { id: 'n', title: { sr: 'Katalog 2026', en: 'Catalog 2026' }, text: { sr: 'Nova kolekcija', en: '' }, cover: photo, pdf },
+  { id: 'd2', title: { sr: 'Algreen ukratko', en: '' }, text: { sr: '', en: '' }, src: '/img/katalog2.png', href: '/files/Algreen info.pdf' },
+  { id: 'draft', title: { sr: 'Nedovršen', en: '' }, text: { sr: '', en: '' } },
+]);
 await put('texts', { sr: { 'home.heroTitle': 'Ulazna vrata po meri', 'works.metaTitle': 'Galerija vrata | Algreen' }, en: {} });
 await put('faq', [{ q: { sr: 'Da li radite subotom?', en: '' }, a: { sr: 'Da </script><b>x</b>', en: 'Yes.' } }]);
 await put('settings', {
@@ -77,7 +82,7 @@ const home = read('index.html');
 assert.ok(home.includes(`/m/${photo}-480.webp 480w, /m/${photo}-960.webp 960w, /m/${photo}-1600.webp 1600w`), 'hero srcset');
 assert.ok(home.includes(`<link rel="preload" as="image" href="/m/${photo}-1600.webp"`), 'LCP preload follows replacement');
 assert.ok(home.includes('Ulazna vrata po meri'), 'text override');
-assert.ok(home.includes(`href="/m/${pdf}/Katalog-ulaznih-vrata-2026-novo.pdf"`), 'catalog tile → new PDF');
+assert.ok(home.includes('href="/katalozi/"'), 'catalog tile → catalogs page');
 assert.ok(home.includes('Da li radite subotom?'), 'FAQ replaced');
 assert.ok(!home.includes('Od kog materijala su vaša ulazna vrata?'), 'old FAQ gone');
 assert.ok(home.includes('Da \\u003c/script>\\u003cb>x\\u003c/b>'), 'JSON-LD escaped');
@@ -98,6 +103,15 @@ assert.ok(works.includes('/img/1.webp') && !works.includes('/img/2-600.webp'), '
 assert.ok(works.includes('<title>Galerija vrata | Algreen</title>'), 'meta title override');
 assert.ok(read('en/works/index.html').includes('alt="EXCLUSIVE AG 77 door, Niš — Algreen"'));
 assert.ok(read('oprema/index.html').includes(`/m/${cutout}-300.webp`), 'equipment slot');
+assert.ok(read('tehnicki-detalji/index.html').includes(`href="/m/${pdf}/Katalog-ulaznih-vrata-2026-novo.pdf"`), 'technical PDF replaced');
+assert.ok(read('o-nama/index.html').includes(`/m/${photo}-1600.webp`), 'about background slot');
+const cat = read('katalozi/index.html');
+assert.ok(cat.includes('Katalog 2026') && cat.includes(`href="/m/${pdf}/Katalog-ulaznih-vrata-2026-novo.pdf"`), 'published catalog');
+assert.ok(cat.includes('Algreen ukratko') && cat.includes('/files/Algreen info.pdf'), 'built-in catalog kept');
+assert.ok(!cat.includes('Nedovršen'), 'incomplete catalog left out');
+assert.ok(!cat.includes('Ekskluzivna ulazna vrata</h2>'), 'removed default catalog gone');
+assert.ok(read('en/catalogs/index.html').includes('Catalog 2026'), 'EN catalog title');
+assert.ok(read('sitemap.xml').includes('https://algreen.rs/katalozi/'), 'catalogs page in sitemap');
 assert.ok(!read('sitemap.xml').includes('admin'), 'admin not in sitemap');
 assert.ok(read('admin/index.html').includes('noindex'), 'admin noindex');
 

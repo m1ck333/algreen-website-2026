@@ -2,7 +2,7 @@
 import { useTranslations } from '../../i18n/ui';
 import { path } from '../../i18n/routes';
 import { company, type Lang } from '../../i18n/config';
-import { img, doc } from '../../lib/slots';
+import { img } from '../../lib/slots';
 import CtaBand from '../CtaBand.astro';
 import FaqSection from '../FaqSection.astro';
 
@@ -28,7 +28,7 @@ const configImg = img('home.configurator');
 
 // Destinations for the four "exclusive doors" tiles (order matches s.tiles).
 const tileHrefs = [
-  doc('catalog'),
+  path('catalogs', lang),
   path('equipment', lang),
   path('equipment', lang),
   path('technical', lang),

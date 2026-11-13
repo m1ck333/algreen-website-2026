@@ -3,7 +3,7 @@
 // (scripts/fetch-content.mjs) re-checks URLs as a second line of defence.
 import { HttpError } from './http.js';
 
-export const SECTIONS = ['gallery', 'slots', 'docs', 'faq', 'texts', 'settings', 'announcement'];
+export const SECTIONS = ['gallery', 'catalogs', 'slots', 'docs', 'faq', 'texts', 'settings', 'announcement'];
 
 const CTRL = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g;
 
@@ -42,6 +42,8 @@ function email(v, field) {
 const KEY = /^[a-z][a-z0-9.]{0,60}$/;
 const ID = /^[a-f0-9]{20}$/;
 const BUILTIN_GALLERY = /^\/img\/\d{1,3}\.webp$/;
+const BUILTIN_IMG = /^\/img\/[A-Za-z0-9_\/-]{1,80}\.(png|jpe?g|webp)$/;
+const BUILTIN_PDF = /^\/files\/[A-Za-z0-9 _-]{1,80}\.pdf$/;
 
 /** Map of media id → { kind } for the ids we need to validate references against. */
 async function mediaKinds(db, ids) {
@@ -83,6 +85,25 @@ export async function normalizeSection(db, name, data) {
         return out;
       });
       await assertMedia(db, items.filter((x) => x.media).map((x) => x.media), 'image');
+      return items;
+    }
+    case 'catalogs': {
+      if (!Array.isArray(data) || data.length > 30) throw new HttpError(400, 'Neispravni katalozi.');
+      const seen = new Set();
+      const items = data.map((it, i) => {
+        const id = str(it?.id, 40, 'id') || `c${i}`;
+        if (seen.has(id)) throw new HttpError(400, 'Dupliran katalog.');
+        seen.add(id);
+        const out = { id, title: l10n(it?.title, 120, 'naziv kataloga'), text: l10n(it?.text, 600, 'opis kataloga') };
+        // Drafts may be incomplete (e.g. no PDF yet) — buildSnapshot leaves those out.
+        if (typeof it?.cover === 'string' && it.cover) out.cover = it.cover;
+        else if (typeof it?.src === 'string' && BUILTIN_IMG.test(it.src)) out.src = it.src;
+        if (typeof it?.pdf === 'string' && it.pdf) out.pdf = it.pdf;
+        else if (typeof it?.href === 'string' && BUILTIN_PDF.test(it.href)) out.href = it.href;
+        return out;
+      });
+      await assertMedia(db, items.filter((x) => x.cover).map((x) => x.cover), 'image');
+      await assertMedia(db, items.filter((x) => x.pdf).map((x) => x.pdf), 'pdf');
       return items;
     }
     case 'slots':
@@ -183,6 +204,10 @@ export function writeKv(db, key, value, by, now = Date.now()) {
 export function referencedMedia(s) {
   const ids = new Set();
   for (const it of s.gallery || []) if (it.media) ids.add(it.media);
+  for (const c of s.catalogs || []) {
+    if (c.cover) ids.add(c.cover);
+    if (c.pdf) ids.add(c.pdf);
+  }
   for (const v of Object.values(s.slots || {})) ids.add(v);
   for (const v of Object.values(s.docs || {})) ids.add(v);
   return ids;
@@ -200,6 +225,12 @@ export async function buildSnapshot(db, sections, now = Date.now()) {
         if (it.caption && (it.caption.sr || it.caption.en)) o.caption = it.caption;
         return o;
       });
+  }
+  if (d.catalogs) {
+    // Only complete catalogs (Serbian title + a PDF) reach the site.
+    snap.catalogs = d.catalogs
+      .filter((c) => c.title?.sr && (c.pdf || c.href))
+      .map(({ id, ...c }) => c);
   }
   if (d.slots && Object.keys(d.slots).length) snap.slots = d.slots;
   if (d.docs && Object.keys(d.docs).length) snap.docs = d.docs;

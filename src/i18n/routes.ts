@@ -7,6 +7,7 @@ export const routes = {
   works: { sr: '/radovi/', en: '/en/works/' },
   equipment: { sr: '/oprema/', en: '/en/equipment/' },
   technical: { sr: '/tehnicki-detalji/', en: '/en/technical-details/' },
+  catalogs: { sr: '/katalozi/', en: '/en/catalogs/' },
   contact: { sr: '/kontakt/', en: '/en/contact/' },
 } as const;
 

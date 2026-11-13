@@ -28,7 +28,8 @@ Monika in /admin ──► Pages Functions /api/admin/*  ──► D1 (drafts, u
 |---|---|
 | Naši radovi: add/delete/hide/reorder photos, captions SR/EN | `src/lib/gallery.ts`, `WorksContent.astro` |
 | Every other image ("slots": home mosaic, tiles, products, works teaser, page heroes, about, equipment, technical) | `src/lib/slots.ts` → `img(key)` |
-| PDFs (catalog tile, 4 technical PDFs) | `src/lib/slots.ts` → `doc(key)` |
+| Catalogs page `/katalozi/` (slider: add/remove/reorder, cover, title, text, PDF) | `src/lib/catalogs.ts`, `CatalogsContent.astro` (defaults: `ui.ts` `catalogs.items`) |
+| Technical PDFs (4) | `src/lib/slots.ts` → `doc(key)` |
 | Contact data (phones, emails, addresses, maps, socials, WhatsApp) | `src/i18n/config.ts` → `company` |
 | FAQ (add/remove/reorder; FAQPage JSON-LD follows) | `ui.ts` `localize()` |
 | Any visible text, SR + EN, incl. meta titles/descriptions | `ui.ts` `localize()` (text overrides) |

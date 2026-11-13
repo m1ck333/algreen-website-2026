@@ -13,6 +13,7 @@ export const ui = {
       works: 'Naši radovi',
       equipment: 'Oprema',
       technical: 'Tehnički detalji',
+      catalogs: 'Katalozi',
       configurator: 'Konfigurator',
       contact: 'Kontakt',
     },
@@ -73,14 +74,6 @@ export const ui = {
       systemsHeading: 'Sistemi ulaznih vrata',
       systemsSubheading:
         'Četiri sistema za svaki budžet i nivo zahteva — od pouzdane osnove do vrhunske izolacije.',
-      catalogHeading: 'Preuzmite kataloge',
-      catalogSubheading: 'Sve naše kolekcije i opremu pregledajte u PDF katalozima.',
-      catalogs: [
-        { title: 'Ekskluzivna ulazna vrata', file: '/files/Katalog ulaznih vrata 2024.pdf', img: '/img/katalog1.png' },
-        { title: 'Flajer', file: '/files/Algreen info.pdf', img: '/img/katalog2.png' },
-        { title: 'Rukohvati, kvake i kontrola pristupa', file: '/files/Katalog Rukohvata.pdf', img: '/img/katalog3.png' },
-        { title: 'Aluminijumski sistemi za ograde', file: '/files/Katalog Rukohvata.pdf', img: '/img/aluminijumski_sistemi_za_ograde.jpeg' },
-      ],
       ctaHeading: 'Spremni za vrata po Vašoj meri?',
       ctaText: 'Posetite jednu od naših poslovnica ili nas kontaktirajte — pomoći ćemo Vam da odaberete idealno rešenje.',
       testimonialsHeading: 'Šta kažu naši kupci',
@@ -199,6 +192,37 @@ export const ui = {
       boxText:
         'Naše čvrsto poštansko sanduče izrađeno je od visokokvalitetnog aluminijuma i čuva Vašu poštu uz odličan izgled u dvorištu. Veoma je izdržljivo i jednostavno za ugradnju.',
     },
+    catalogs: {
+      metaTitle: 'Katalozi ulaznih vrata i opreme (PDF) | Algreen',
+      metaDescription:
+        'Preuzmite Algreen kataloge u PDF formatu: ekskluzivna aluminijumska ulazna vrata, rukohvati, kvake i kontrola pristupa, kao i kratak pregled naše ponude.',
+      title: 'Katalozi',
+      subtitle: 'Pregledajte naše kolekcije i opremu u PDF katalozima',
+      kicker: 'Katalog',
+      download: 'Preuzmite katalog',
+      prev: 'Prethodni katalog',
+      next: 'Sledeći katalog',
+      items: [
+        {
+          title: 'Ekskluzivna ulazna vrata',
+          text: 'Kompletna kolekcija aluminijumskih ulaznih vrata — modeli, sistemi, boje i završne obrade na jednom mestu.',
+          file: '/files/Katalog ulaznih vrata 2024.pdf',
+          img: '/img/katalog1.png',
+        },
+        {
+          title: 'Algreen ukratko',
+          text: 'Kratak pregled kompanije i naše ponude — idealno ako se prvi put upoznajete sa Algreen vratima.',
+          file: '/files/Algreen info.pdf',
+          img: '/img/katalog2.png',
+        },
+        {
+          title: 'Rukohvati, kvake i kontrola pristupa',
+          text: 'Rukohvati, kvake, rozete, brave i sistemi kontrole pristupa kojima vrata dobijaju završni izgled i dodatnu sigurnost.',
+          file: '/files/Katalog Rukohvata.pdf',
+          img: '/img/katalog3.png',
+        },
+      ],
+    },
     technical: {
       metaTitle: 'Tehnički detalji ulaznih vrata — preseci i Ud vrednosti | Algreen',
       metaDescription:
@@ -296,6 +320,7 @@ export const ui = {
       works: 'Our Works',
       equipment: 'Equipment',
       technical: 'Technical Details',
+      catalogs: 'Catalogs',
       configurator: 'Configurator',
       contact: 'Contact',
     },
@@ -356,14 +381,6 @@ export const ui = {
       systemsHeading: 'Entrance door systems',
       systemsSubheading:
         'Four systems for every budget and requirement — from a reliable base to premium insulation.',
-      catalogHeading: 'Download catalogs',
-      catalogSubheading: 'Browse all our collections and equipment in PDF catalogs.',
-      catalogs: [
-        { title: 'Exclusive entrance doors', file: '/files/Katalog ulaznih vrata 2024.pdf', img: '/img/katalog1.png' },
-        { title: 'Flyer', file: '/files/Algreen info.pdf', img: '/img/katalog2.png' },
-        { title: 'Handrails, handles & access control', file: '/files/Katalog Rukohvata.pdf', img: '/img/katalog3.png' },
-        { title: 'Aluminium fence systems', file: '/files/Katalog Rukohvata.pdf', img: '/img/aluminijumski_sistemi_za_ograde.jpeg' },
-      ],
       ctaHeading: 'Ready for a door made to measure?',
       ctaText: 'Visit one of our branches or get in touch — we will help you choose the ideal solution.',
       testimonialsHeading: 'What our customers say',
@@ -481,6 +498,37 @@ export const ui = {
       boxHeading: 'Mailbox',
       boxText:
         'Our sturdy mailbox is made of high-quality aluminium and keeps your mail safe while looking great in your yard. It is very durable and easy to install.',
+    },
+    catalogs: {
+      metaTitle: 'Entrance door & equipment catalogs (PDF) | Algreen',
+      metaDescription:
+        'Download Algreen catalogs as PDF: exclusive aluminium entrance doors, handles, levers and access control, plus a short overview of our range.',
+      title: 'Catalogs',
+      subtitle: 'Browse our collections and equipment in PDF catalogs',
+      kicker: 'Catalog',
+      download: 'Download catalog',
+      prev: 'Previous catalog',
+      next: 'Next catalog',
+      items: [
+        {
+          title: 'Exclusive entrance doors',
+          text: 'The complete collection of aluminium entrance doors — models, systems, colours and finishes in one place.',
+          file: '/files/Katalog ulaznih vrata 2024.pdf',
+          img: '/img/katalog1.png',
+        },
+        {
+          title: 'Algreen at a glance',
+          text: 'A short overview of the company and our range — ideal if you are getting to know Algreen doors for the first time.',
+          file: '/files/Algreen info.pdf',
+          img: '/img/katalog2.png',
+        },
+        {
+          title: 'Handles, levers & access control',
+          text: 'Handles, levers, rosettes, locks and access control systems that give your door its finishing look and extra security.',
+          file: '/files/Katalog Rukohvata.pdf',
+          img: '/img/katalog3.png',
+        },
+      ],
     },
     technical: {
       metaTitle: 'Technical details — cross-sections and Ud values | Algreen',

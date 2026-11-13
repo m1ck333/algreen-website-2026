@@ -79,8 +79,8 @@ D1 `algreen-cms` + R2 `algreen-media`, bindings in `wrangler.toml`). Reset a pas
   (both gitignored), and the components read them through `src/lib/cms.ts`.
 - **Defaults live in code** and are used whenever nothing is published, so the output is identical
   to the hand-coded site:
-  image/PDF slots in `src/lib/slots.ts` (`img('home.hero.1')`, `doc('catalog')`), gallery in
-  `src/lib/gallery.ts`, text/FAQ overrides applied in `useTranslations` (`ui.ts`), contact
+  image/PDF slots in `src/lib/slots.ts` (`img('home.hero.1')`, `doc('technical.pdf.1')`), gallery in
+  `src/lib/gallery.ts`, catalogs page in `src/lib/catalogs.ts`, text/FAQ overrides applied in `useTranslations` (`ui.ts`), contact
   settings merged into `company` (`config.ts`), announcement bar in `Header.astro`.
 - **Adding an image to the site?** Register it in `SLOTS` and render it with `img(key)`. It then
   becomes editable in the admin automatically. New copy in `ui.ts` shows up in the "Tekstovi" tab

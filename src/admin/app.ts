@@ -1,8 +1,8 @@
 /**
  * Algreen admin — small vanilla-TS app for /admin/ (no framework, no deps).
  *
- * Model: every tab edits one "section" (gallery, slots, docs, settings, faq, texts,
- * announcement). Edits stay local until "Sačuvaj" (PUT /api/admin/section/:name →
+ * Model: every tab edits one "section" (gallery, catalogs, slots, docs, settings, faq,
+ * texts, announcement). Edits stay local until "Sačuvaj" (PUT /api/admin/section/:name →
  * D1 draft). "Objavi na sajt" saves, freezes the drafts into the published snapshot
  * and triggers the static rebuild (~2 min). A section saved as `null` = site default.
  */
@@ -41,6 +41,17 @@ interface Settings {
   whatsapp: string;
   branches: Branch[];
 }
+interface CatalogItem {
+  id: string;
+  title: L10n;
+  text: L10n;
+  /** Uploaded cover image id, or a built-in image path. */
+  cover?: string;
+  src?: string;
+  /** Uploaded PDF id, or a built-in /files/… path. */
+  pdf?: string;
+  href?: string;
+}
 interface FaqItem {
   q: L10n;
   a: L10n;
@@ -57,6 +68,7 @@ interface Announcement {
 }
 interface Sections {
   gallery: GalleryItem[];
+  catalogs: CatalogItem[];
   slots: Record<string, string>;
   docs: Record<string, string>;
   settings: Settings;
@@ -82,6 +94,7 @@ interface Defaults {
   slots: { key: string; group: string; label: string; src: string; preview: string }[];
   docs: { key: string; group: string; label: string; href: string }[];
   gallery: { id: string; src: string; preview: string }[];
+  catalogs: CatalogItem[];
   faq: FaqItem[];
   settings: Settings;
   texts: { path: string; group: string; sr: string; en: string }[];
@@ -333,6 +346,7 @@ const toNull = new Set<Name>(); // sections being reset to the site default
 function defaultsFor<N extends Name>(n: N): Sections[N] {
   const d: Sections = {
     gallery: D.gallery.map((g) => ({ id: g.id, src: g.src, caption: { sr: '', en: '' }, hidden: false })),
+    catalogs: clone(D.catalogs),
     slots: {},
     docs: {},
     settings: clone(D.settings),
@@ -462,8 +476,9 @@ function pollPublish(since: number, started = Date.now()) {
 // ---------------------------------------------------------------- shell
 const TABS: [string, string, Name | null][] = [
   ['gallery', 'Naši radovi', 'gallery'],
+  ['catalogs', 'Katalozi', 'catalogs'],
   ['slots', 'Slike sajta', 'slots'],
-  ['docs', 'Katalozi i PDF', 'docs'],
+  ['docs', 'Tehnički PDF', 'docs'],
   ['settings', 'Kontakt podaci', 'settings'],
   ['faq', 'Česta pitanja', 'faq'],
   ['texts', 'Tekstovi', 'texts'],
@@ -606,6 +621,7 @@ const l10nInputs = (v: L10n, onChange: () => void, opts: { area?: boolean; place
 // ---------------------------------------------------------------- views
 const VIEWS: Record<string, () => Node[]> = {
   gallery: viewGallery,
+  catalogs: viewCatalogs,
   slots: viewSlots,
   docs: viewDocs,
   settings: viewSettings,
@@ -836,6 +852,136 @@ function viewGallery(): Node[] {
   ];
 }
 
+function viewCatalogs(): Node[] {
+  const items = get('catalogs');
+  const t = () => touch('catalogs');
+  const move = (from: number, to: number) => {
+    if (to < 0 || to >= items.length) return;
+    const [x] = items.splice(from, 1);
+    items.splice(to, 0, x);
+    t();
+    renderView();
+  };
+  const nameOf = (c: CatalogItem) =>
+    c.pdf ? S.media.find((m) => m.id === c.pdf)?.name || 'novi PDF' : c.href ? decodeURIComponent(c.href.split('/').pop() || '') : '';
+  const coverOf = (c: CatalogItem) => (c.cover ? mediaUrl(c.cover) : c.src || '');
+
+  const upload = (kind: 'image' | 'pdf', c: CatalogItem, prog: ReturnType<typeof progressBox>) => async ([f]: File[]) => {
+    setBusy(true);
+    try {
+      if (kind === 'image') {
+        const m = await uploadImage(f, (p) => prog.set('Otpremanje slike…', p));
+        c.cover = m.id;
+        delete c.src;
+      } else {
+        const m = await uploadPdf(f, (p) => prog.set('Otpremanje PDF-a…', p));
+        c.pdf = m.id;
+        delete c.href;
+      }
+      t();
+      renderView();
+    } catch (e) {
+      toast((e as Error).message, true);
+    } finally {
+      setBusy(false);
+      prog.done();
+    }
+  };
+
+  return [
+    h('h1', {}, 'Katalozi'),
+    h(
+      'p',
+      { class: 'lead' },
+      'Katalozi na stranici „Katalozi” (prikazuju se kao slajder, ovim redosledom). Za svaki katalog: naslovna slika, naziv, kratak opis i PDF fajl.',
+    ),
+    h(
+      'div',
+      { class: 'stack' },
+      items.map((c, i) => {
+        const prog = progressBox();
+        const cover = coverOf(c);
+        const pdfName = nameOf(c);
+        const incomplete = !c.title.sr.trim() || !pdfName;
+        return h(
+          'div',
+          { class: 'card stack' },
+          h(
+            'div',
+            { class: 'row' },
+            h('strong', {}, `Katalog ${i + 1}`),
+            incomplete ? h('span', { class: 'badge on' }, 'Neće se prikazati dok ne unesete naziv i PDF') : null,
+            h('span', { style: 'flex:1' }),
+            h('button', { type: 'button', class: 'btn small', title: 'Pomeri katalog jedno mesto gore', onclick: () => move(i, i - 1), disabled: i === 0 }, '↑ Gore'),
+            h('button', { type: 'button', class: 'btn small', title: 'Pomeri katalog jedno mesto dole', onclick: () => move(i, i + 1), disabled: i === items.length - 1 }, '↓ Dole'),
+            h(
+              'button',
+              {
+                type: 'button',
+                class: 'btn small danger',
+                onclick: async () => {
+                  const name = c.title.sr || c.title.en;
+                  if (!(await ask({ title: 'Obrisati ovaj katalog?', text: name ? `„${name}”` : undefined, ok: 'Obriši', danger: true, image: cover || undefined }))) return;
+                  items.splice(i, 1);
+                  t();
+                  renderView();
+                },
+              },
+              'Obriši',
+            ),
+          ),
+          h(
+            'div',
+            { class: 'cat' },
+            h(
+              'div',
+              { class: 'stack' },
+              h('div', { class: 'cat-pic' }, cover ? h('img', { src: cover, alt: '' }) : h('span', { class: 'muted' }, 'Nema slike')),
+              filePicker(cover ? 'Zameni sliku' : 'Dodaj sliku', 'image/*', false, upload('image', c, prog), 'btn small'),
+            ),
+            h(
+              'div',
+              { class: 'stack' },
+              l10nInputs(c.title, t, { label: 'Naziv kataloga' }),
+              l10nInputs(c.text, t, { label: 'Kratak opis (nije obavezno)', area: true }),
+              h('label', {}, 'PDF fajl'),
+              h(
+                'div',
+                { class: 'row' },
+                pdfName
+                  ? h('a', { href: c.pdf ? mediaUrl(c.pdf) : c.href, target: '_blank', rel: 'noopener' }, pdfName)
+                  : h('span', { class: 'muted' }, 'Još nije dodat'),
+                h('span', { style: 'flex:1' }),
+                filePicker(pdfName ? 'Zameni PDF' : 'Dodaj PDF', 'application/pdf,.pdf', false, upload('pdf', c, prog), pdfName ? 'btn small' : 'btn small primary'),
+              ),
+            ),
+          ),
+          prog.box,
+        );
+      }),
+    ),
+    h(
+      'div',
+      { class: 'row', style: 'margin-top:14px' },
+      h(
+        'button',
+        {
+          type: 'button',
+          class: 'btn primary',
+          onclick: () => {
+            items.push({ id: `c${Date.now().toString(36)}`, title: { sr: '', en: '' }, text: { sr: '', en: '' } });
+            t();
+            renderView();
+          },
+        },
+        '+ Dodaj katalog',
+      ),
+      resetBtn('catalogs', 'Vrati originalne kataloge', 'Vratiti originalna 3 kataloga?'),
+    ),
+    h('p', { class: 'muted' }, 'Savet: za naslovnu sliku najbolje je kvadratna slika (npr. fotografija korica kataloga). Ako engleski nije popunjen, na engleskoj verziji se prikazuje srpski.'),
+  ];
+}
+
 function groupBy<T extends { group: string }>(list: T[]) {
   const m = new Map<string, T[]>();
   for (const x of list) m.set(x.group, [...(m.get(x.group) || []), x]);
@@ -918,8 +1064,8 @@ function viewSlots(): Node[] {
 function viewDocs(): Node[] {
   const docs = get('docs');
   const out: Node[] = [
-    h('h1', {}, 'Katalozi i PDF dokumenti'),
-    h('p', { class: 'lead' }, 'Zamenite PDF katalog ili tehnički list novom verzijom. Link na sajtu ostaje na istom mestu, samo vodi na novi fajl.'),
+    h('h1', {}, 'Tehnički PDF dokumenti'),
+    h('p', { class: 'lead' }, 'Tehnički listovi sistema vrata (stranica „Tehnički detalji”). Zamenite PDF novom verzijom — link na sajtu ostaje na istom mestu, samo vodi na novi fajl. Kataloge menjate u kartici „Katalozi”.'),
   ];
   const nameOf = (id: string) => S.media.find((m) => m.id === id)?.name || 'novi PDF';
   for (const [group, list] of groupBy(D.docs)) {
@@ -1374,7 +1520,10 @@ function viewHelp(): Node[] {
         li('Najbolje su JPG fotografije sa telefona ili fotoaparata — ne morate ih smanjivati, to radimo automatski.'),
         li('„Sakrij” privremeno sklanja sliku sa sajta (možete je vratiti). „Obriši” je trajno uklanja iz galerije.'),
         li('Dodajte kratak opis slike (npr. „Ulazna vrata EXCLUSIVE AG 77, Niš”) — pomaže da vas ljudi pronađu na Google-u.'),
+        li('Za pozadine sekcija (u „Slike sajta”) izaberite široku, položenu fotografiju — tekst stoji preko leve strane slike.'),
       ),
+      h('h2', {}, 'Katalozi'),
+      h('p', {}, 'U kartici „Katalozi” dodajete novi katalog („+ Dodaj katalog”), pa mu dodate naslovnu sliku, naziv i PDF. Katalog se pojavljuje na sajtu tek kada ima naziv i PDF.'),
       h('h2', {}, 'Vraćanje na staro'),
       h('p', {}, 'Svaka kartica ima dugme „Vrati original” koje vraća prvobitni sadržaj. Ništa ne može trajno da „pokvari” sajt.'),
     ),

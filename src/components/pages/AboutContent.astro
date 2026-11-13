@@ -12,6 +12,7 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 
 const stepImages = t.about.steps.map((_, i) => img(`about.step.${i + 1}`));
+const mainBg = img('about.main.bg');
 const teamImages = t.about.team.map((_, i) => img(`about.team.${i + 1}`));
 const teamEyebrow = lang === 'sr' ? 'Tim' : 'Team';
 ---
@@ -38,11 +39,13 @@ const teamEyebrow = lang === 'sr' ? 'Tim' : 'Team';
   </div>
 </section>
 
-<!-- Main statement -->
-<section class="bg-ink-800 section">
-  <div class="container-px max-w-4xl text-center reveal">
+<!-- Main statement — full-bleed background photo (editable: /admin → Slike sajta) -->
+<section class="relative overflow-hidden bg-ink-900">
+  <img src={mainBg.src} srcset={mainBg.srcset} sizes="100vw" alt="" aria-hidden="true" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover" />
+  <div class="absolute inset-0 bg-ink-900/75"></div>
+  <div class="container-px relative max-w-4xl py-24 text-center sm:py-32 reveal">
     <h2 class="text-3xl font-semibold text-white sm:text-4xl">{t.about.mainHeading}</h2>
-    <p class="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-white/70">{t.about.mainText}</p>
+    <p class="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-white/80">{t.about.mainText}</p>
   </div>
 </section>
 

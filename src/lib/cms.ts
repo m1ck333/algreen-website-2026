@@ -65,6 +65,17 @@ export interface FaqItem {
   a: L10n;
 }
 
+export interface CatalogItem {
+  title: L10n;
+  text?: L10n;
+  /** Cover: uploaded image id, or a built-in image path. */
+  cover?: string;
+  src?: string;
+  /** PDF: uploaded document id, or a built-in /files/… path. */
+  pdf?: string;
+  href?: string;
+}
+
 export interface CmsData {
   v?: number;
   publishedAt?: string;
@@ -72,6 +83,7 @@ export interface CmsData {
   slots?: Record<string, string>;
   docs?: Record<string, string>;
   faq?: FaqItem[] | null;
+  catalogs?: CatalogItem[] | null;
   texts?: Partial<Record<Lang, Record<string, string>>>;
   settings?: Settings | null;
   announcement?: Announcement | null;
