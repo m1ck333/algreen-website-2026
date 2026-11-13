@@ -23,8 +23,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
   One slider, one catalog per slide — laid out like the homepage "Kreirajte svoja vrata"
   section (text left, cover right). Every slide is in the static HTML (SEO). The track is
   NOT a scroll container (it's moved with a transform), so the mouse wheel / trackpad
-  always scrolls the page. Navigation (wraps around): arrows on the cover, thumbnails,
-  swipe, ← →.
+  always scrolls the page. Navigation: ‹ › arrows beside the thumbnails, thumbnails,
+  swipe, ← → (no wrap-around; autoplay plays through once and stops at the last).
   Gentle autoplay with a progress line shows it's a slider; it stops for good on the
   first interaction and is off with prefers-reduced-motion.
 -->
@@ -60,16 +60,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
                       class="aspect-square w-full select-none object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     />
                   </a>
-                  {many && (
-                    <>
-                      <button type="button" class="slider-arrow left-3" data-prev aria-label={c.prev}>
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
-                      </button>
-                      <button type="button" class="slider-arrow right-3" data-next aria-label={c.next}>
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-                      </button>
-                    </>
-                  )}
                 </div>
               </div>
             </article>
@@ -82,14 +72,22 @@ const pad = (n: number) => String(n).padStart(2, '0');
       many && (
         <>
           <!-- Thumbnails: every catalog at a glance, the active one in red -->
-          <div class="mt-14 flex flex-wrap justify-center gap-3 sm:gap-4" role="tablist" aria-label={c.title}>
+          <div class="mt-14 flex items-center justify-center gap-2 sm:gap-5">
+          <button type="button" class="slider-arrow" data-prev aria-label={c.prev}>
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+          </button>
+          <div class="flex flex-wrap justify-center gap-2 sm:gap-4" role="tablist" aria-label={c.title}>
             {items.map((cat, i) => (
               <button type="button" role="tab" class="thumb" data-thumb={i} aria-selected={i === 0 ? 'true' : 'false'} aria-label={cat.title}>
-                <img src={cat.cover.src} alt="" loading="lazy" decoding="async" class="h-14 w-14 shrink-0 rounded object-cover sm:h-16 sm:w-16" />
+                <img src={cat.cover.src} alt="" loading="lazy" decoding="async" class="h-11 w-11 shrink-0 rounded object-cover sm:h-16 sm:w-16" />
                 <span class="hidden max-w-[11rem] text-left text-xs font-semibold uppercase leading-snug tracking-wider sm:block">{cat.title}</span>
                 <span class="thumb-bar" aria-hidden="true"><span /></span>
               </button>
             ))}
+          </div>
+          <button type="button" class="slider-arrow" data-next aria-label={c.next}>
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+          </button>
           </div>
         </>
       )
@@ -104,24 +102,24 @@ const pad = (n: number) => String(n).padStart(2, '0');
     touch-action: pan-y; /* vertical swipes scroll the page, horizontal ones change slides */
   }
   .slider-arrow {
-    position: absolute;
-    top: 50%;
-    translate: 0 -50%;
     display: inline-flex;
-    height: 3.25rem;
-    width: 3.25rem;
+    flex-shrink: 0;
+    height: 2.75rem;
+    width: 2.75rem;
     align-items: center;
     justify-content: center;
     border-radius: 9999px;
-    background: rgb(20 18 18 / 0.7);
+    border: 1px solid rgb(255 255 255 / 0.25);
     color: #fff;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 6px 20px -6px rgb(0 0 0 / 0.6);
-    transition: background 0.2s, transform 0.2s, opacity 0.2s;
+    transition: border-color 0.2s, background 0.2s, opacity 0.2s;
   }
   .slider-arrow:hover {
+    border-color: #e01f26;
     background: #e01f26;
-    transform: scale(1.06);
+  }
+  .slider-arrow:disabled {
+    opacity: 0.25;
+    pointer-events: none;
   }
   .thumb {
     position: relative;
@@ -130,11 +128,16 @@ const pad = (n: number) => String(n).padStart(2, '0');
     gap: 0.75rem;
     overflow: hidden;
     border-radius: 0.5rem;
-    padding: 0.5rem;
+    padding: 0.3rem;
     color: rgb(255 255 255 / 0.55);
     background: rgb(255 255 255 / 0.04);
     box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1);
     transition: color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  @media (min-width: 640px) {
+    .thumb {
+      padding: 0.5rem;
+    }
   }
   .thumb:hover {
     color: #fff;
@@ -200,9 +203,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
         b.setAttribute('aria-selected', String(i === current));
         b.classList.remove('playing');
       });
+      prevs.forEach((b) => (b.disabled = current === 0));
+      nexts.forEach((b) => (b.disabled = current === last));
     };
+    const last = slides.length - 1;
     const go = (i: number) => {
-      current = (i + slides.length) % slides.length;
+      current = Math.max(0, Math.min(last, i));
       render();
     };
 
@@ -214,6 +220,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     let left = AUTOPLAY_MS;
     const schedule = () => {
       clearTimeout(timer);
+      if (current === last) auto = false; // plays through once, never jumps back to the start
       if (!auto) return;
       const thumb = thumbs[current];
       if (thumb) {
@@ -278,7 +285,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       tracking = false;
       const dx = e.clientX - x0;
       if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(e.clientY - y0)) {
-        user(dx < 0 ? current + 1 : current - 1);
+        user(dx < 0 ? current + 1 : current - 1); // clamped: no wrap-around
       }
     });
     track.addEventListener('pointercancel', () => (tracking = false));
