@@ -22,7 +22,7 @@ interface Props {
   preloadImages?: { href: string; imagesrcset?: string; imagesizes?: string }[];
 }
 
-const { lang, routeKey, title, description, ogImage = '/img/og-default.jpg', extraSchema, preloadImages = [] } = Astro.props;
+const { lang, routeKey, title, description, ogImage = '/img/og-2026.jpg', extraSchema, preloadImages = [] } = Astro.props;
 const tt = useTranslations(lang);
 
 const site = Astro.site?.href.replace(/\/$/, '') ?? 'https://algreen.rs';
