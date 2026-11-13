@@ -14,6 +14,9 @@ const t = useTranslations(lang);
 const c = t.catalogs;
 const items = catalogs(lang);
 const many = items.length > 1;
+// More than 4 catalogs: covers only in the thumbnail row (titles as tooltips) so it stays
+// one line on desktop; phones get a "03 / 10" counter between the arrows instead.
+const compact = items.length > 4;
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
@@ -76,11 +79,16 @@ const pad = (n: number) => String(n).padStart(2, '0');
           <button type="button" class="slider-arrow" data-prev aria-label={c.prev}>
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
           </button>
-          <div class="flex flex-wrap justify-center gap-2 sm:gap-4" role="tablist" aria-label={c.title}>
+          {compact && (
+            <span class="min-w-[5rem] text-center text-sm font-semibold tracking-[0.2em] text-white/80 sm:hidden" data-counter aria-hidden="true">
+              01 / {pad(items.length)}
+            </span>
+          )}
+          <div class:list={['flex-wrap justify-center gap-2 sm:gap-4', compact ? 'hidden sm:flex' : 'flex']} role="tablist" aria-label={c.title}>
             {items.map((cat, i) => (
-              <button type="button" role="tab" class="thumb" data-thumb={i} aria-selected={i === 0 ? 'true' : 'false'} aria-label={cat.title}>
+              <button type="button" role="tab" class="thumb" title={cat.title} data-thumb={i} aria-selected={i === 0 ? 'true' : 'false'} aria-label={cat.title}>
                 <img src={cat.cover.src} alt="" loading="lazy" decoding="async" class="h-11 w-11 shrink-0 rounded object-cover sm:h-16 sm:w-16" />
-                <span class="hidden max-w-[11rem] text-left text-xs font-semibold uppercase leading-snug tracking-wider sm:block">{cat.title}</span>
+                {!compact && <span class="hidden max-w-[11rem] text-left text-xs font-semibold uppercase leading-snug tracking-wider sm:block">{cat.title}</span>}
                 <span class="thumb-bar" aria-hidden="true"><span /></span>
               </button>
             ))}
@@ -188,6 +196,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
     if (!track || slides.length < 2) return;
     const thumbs = [...root.querySelectorAll<HTMLButtonElement>('[data-thumb]')];
+    const counter = root.querySelector<HTMLElement>('[data-counter]');
     const prevs = [...root.querySelectorAll<HTMLButtonElement>('[data-prev]')];
     const nexts = [...root.querySelectorAll<HTMLButtonElement>('[data-next]')];
     let current = 0;
@@ -203,6 +212,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         b.setAttribute('aria-selected', String(i === current));
         b.classList.remove('playing');
       });
+      if (counter) counter.textContent = `${String(current + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
       prevs.forEach((b) => (b.disabled = current === 0));
       nexts.forEach((b) => (b.disabled = current === last));
     };
