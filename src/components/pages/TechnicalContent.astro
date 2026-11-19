@@ -52,8 +52,8 @@ const systems = t.technical.systems.map((s, i) => ({ ...s, im: img(`technical.sy
                   <dd class="text-right font-medium text-white">{s.hinges}</dd>
                 </div>
                 <div class="flex justify-between gap-3">
-                  <dt class="font-semibold text-accent">{t.technical.udValue}</dt>
-                  <dd class="text-right font-bold text-accent">{s.ud}</dd>
+                  <dt class="font-semibold text-accent-soft">{t.technical.udValue}</dt>
+                  <dd class="text-right font-bold text-accent-soft">{s.ud}</dd>
                 </div>
               </dl>
               <a href={s.href} target="_blank" rel="noopener" class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-accent">
@@ -93,7 +93,7 @@ const systems = t.technical.systems.map((s, i) => ({ ...s, im: img(`technical.sy
         </tr>
         <tr class="bg-white/5">
           <td class="py-4 pr-4 font-semibold text-accent">{t.technical.udValue}</td>
-          {systems.map((s) => <td class="px-4 py-4 font-bold text-accent">{s.ud}</td>)}
+          {systems.map((s) => <td class="px-4 py-4 font-bold text-accent-soft">{s.ud}</td>)}
         </tr>
       </tbody>
     </table>
