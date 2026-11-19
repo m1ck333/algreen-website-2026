@@ -32,6 +32,8 @@ export default {
           DEFAULT: '#e01f26',
           light: '#f0353c',
           dark: '#b8161c',
+          // lighter red for small text on the dark backgrounds (WCAG AA ≥ 4.5:1 on ink-700…900)
+          soft: '#ff5c62',
         },
         // warm luxe neutrals for a more premium feel than flat white
         cream: {

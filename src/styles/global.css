@@ -64,7 +64,7 @@
 
   /* Premium eyebrow: small caps label with a short accent rule */
   .eyebrow {
-    @apply mb-4 inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-widest2 text-accent;
+    @apply mb-4 inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-widest2 text-accent-soft;
   }
   .eyebrow::before {
     content: '';
